@@ -9,8 +9,37 @@
     <packaging>jar</packaging>
 
     <name>RXTX</name>
+    <url>https://github.com/bartprokop/rxtx</url>
     
+    <developers>
+        <developer>
+            <name>Bartłomiej Prokop</name>
+            <email>prokop.bart@gmail.com</email>
+            <timezone>+1</timezone>
+            <url>http://bart.prokop.name/</url>
+        </developer>
+    </developers>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray</id>
+            <name>bartprokop-maven-commons</name>
+            <url>https://api.bintray.com/maven/bartprokop/maven/rxtx</url>
+        </repository>
+        <site>
+            <id>bart.prokop.name</id>
+            <url>ftp://ftp.internetdsl.pl/m2-sites/${project.artifactId}-${project.version}</url>
+        </site>
+    </distributionManagement>
+
     <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>2.4</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -23,23 +52,57 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-jarsigner-plugin</artifactId>
-                <version>1.3.1</version>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
                 <executions>
                     <execution>
-                        <id>sign</id>
+                        <id>attach-sources</id>
                         <goals>
-                            <goal>sign</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <keystore>keystore.jks</keystore>
-                    <alias>bart</alias>
-                    <storepass>{Y6eQCL8G9d0HsxRdYQkHjaAutjWqtYG5uGSmn9IrRNFxPaDkq1mDVOo85mM/0Se6}</storepass>
-                    <keypass>{SYWdkOASE6kHkvZV1cp3qcDL8KhxZn4f+y9RHhGqfE9WKGBldbItSIeE+jkihXmQ}</keypass>
-                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+    
+    <profiles>
+        <profile>
+            <id>bintray</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-jarsigner-plugin</artifactId>
+                        <version>1.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <keystore>keystore.jks</keystore>
+                            <alias>bart</alias>
+                            <storepass>{Y6eQCL8G9d0HsxRdYQkHjaAutjWqtYG5uGSmn9IrRNFxPaDkq1mDVOo85mM/0Se6}</storepass>
+                            <keypass>{SYWdkOASE6kHkvZV1cp3qcDL8KhxZn4f+y9RHhGqfE9WKGBldbItSIeE+jkihXmQ}</keypass>
+                        </configuration>
+                    </plugin>
+                </plugins>                
+            </build>
+        </profile>
+    </profiles>    
 </project>
