@@ -63,7 +63,7 @@ import java.lang.Math;
 
 /**
 * @author Trent Jarvi
-* @version $Id: Raw.java,v 1.1.2.17 2008-09-14 22:29:30 jarvi Exp $
+* @version $Id: Raw.java,v 1.1.2.18 2010/01/03 23:15:25 jarvi Exp $
 * @since JDK1.0
 */
 
@@ -348,6 +348,7 @@ final class Raw  extends  RawPort {
 		if( SPEventListener != null ) throw new TooManyListenersException();
 		SPEventListener = lsnr;
 		monThread = new MonitorThread();
+		monThread.setDaemon(true);
 		monThread.start(); 
 	}
 	/** Remove the Raw port event listener */
@@ -473,7 +474,7 @@ final class Raw  extends  RawPort {
 	}
 	public String getVersion()
 	{
-		String Version="$Id: Raw.java,v 1.1.2.17 2008-09-14 22:29:30 jarvi Exp $";
+		String Version="$Id: Raw.java,v 1.1.2.18 2010/01/03 23:15:25 jarvi Exp $";
 		return(Version);
 	}
 }
