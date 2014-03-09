@@ -20,7 +20,7 @@ Version 2.1.8 is:
  - compiled against Java 1.3
  
 Currently I'm working on version 2.3.0:
- - added Findbugs build checks (107 deficiencies reported on Low threshold, all fixed !!!)
+ - added Findbugs build checks (107 deficiencies reported on Low threshold, 21 on Default, all fixed !!!)
  - Java 1.7
  - some new features....
 
