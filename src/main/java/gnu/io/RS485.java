@@ -444,7 +444,7 @@ final class RS485  extends  RS485Port {
 			}
 			Minimum=Math.min(Minimum,threshold);
 			if(Minimum == 0) Minimum=1;
-			int Available=available();
+			available();
 			int Ret = readArray( b, off, Minimum);
 			return Ret;
 		}

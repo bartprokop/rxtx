@@ -60,6 +60,8 @@ package gnu.io;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Trent Jarvi
@@ -71,11 +73,11 @@ import java.io.IOException;
  */
 public abstract class CommPort extends Object {
 
-    protected String name;
-    private final static boolean debug = false;
+    private static final Logger LOGGER = Logger.getLogger(CommPort.class.getName());
 
-    public abstract void enableReceiveFraming(int f)
-            throws UnsupportedCommOperationException;
+    protected String name;
+
+    public abstract void enableReceiveFraming(int f) throws UnsupportedCommOperationException;
 
     public abstract void disableReceiveFraming();
 
@@ -85,15 +87,13 @@ public abstract class CommPort extends Object {
 
     public abstract void disableReceiveTimeout();
 
-    public abstract void enableReceiveTimeout(int time)
-            throws UnsupportedCommOperationException;
+    public abstract void enableReceiveTimeout(int time) throws UnsupportedCommOperationException;
 
     public abstract boolean isReceiveTimeoutEnabled();
 
     public abstract int getReceiveTimeout();
 
-    public abstract void enableReceiveThreshold(int thresh)
-            throws UnsupportedCommOperationException;
+    public abstract void enableReceiveThreshold(int thresh) throws UnsupportedCommOperationException;
 
     public abstract void disableReceiveThreshold();
 
@@ -110,13 +110,9 @@ public abstract class CommPort extends Object {
     public abstract int getOutputBufferSize();
 
     public void close() {
-        if (debug) {
-            System.out.println("CommPort:close()");
-        }
-
+        LOGGER.log(Level.FINE, "Closing port {0}", name);
         try {
-            CommPortIdentifier cp
-                    = CommPortIdentifier.getPortIdentifier(this);
+            CommPortIdentifier cp = CommPortIdentifier.getPortIdentifier(this);
             if (cp != null) {
                 CommPortIdentifier.getPortIdentifier(this).internalClosePort();
             }
@@ -124,24 +120,16 @@ public abstract class CommPort extends Object {
         }
     }
 
-    ;
-
-	public abstract InputStream getInputStream() throws IOException;
+    public abstract InputStream getInputStream() throws IOException;
 
     public abstract OutputStream getOutputStream() throws IOException;
 
     public String getName() {
-        if (debug) {
-            System.out.println("CommPort:getName()");
-        }
-        return (name);
+        return name;
     }
 
     @Override
     public String toString() {
-        if (debug) {
-            System.out.println("CommPort:toString()");
-        }
-        return (name);
+        return name;
     }
 }
