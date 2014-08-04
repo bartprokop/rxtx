@@ -20,9 +20,6 @@ public class Demo1 {
         System.out.println(System.getProperty("os.version"));
 
         String[] portList = getPortList();
-        portList = getPortList();
-        portList = getPortList();
-        portList = getPortList();
         System.out.print(portList.length);
         System.out.print(" port(ow):");
         for (int i = 0; i < portList.length; i++) {

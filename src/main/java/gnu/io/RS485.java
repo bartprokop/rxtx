@@ -104,6 +104,7 @@ final class RS485 extends RS485Port {
      */
     private final RS485OutputStream out = new RS485OutputStream();
 
+    @Override
     public OutputStream getOutputStream() {
         return out;
     }
