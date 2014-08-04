@@ -71,7 +71,7 @@ import java.util.logging.Logger;
 /**
  * CommPort
  */
-public abstract class CommPort extends Object {
+public abstract class CommPort {
 
     private static final Logger LOGGER = Logger.getLogger(CommPort.class.getName());
 

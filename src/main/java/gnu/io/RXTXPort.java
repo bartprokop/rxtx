@@ -74,7 +74,8 @@ final public class RXTXPort extends SerialPort {
 
     static {
         logger.fine("RXTXPort {}");
-        RXTXVersion.loadLibrary("rxtxSerial");
+        RXTXVersion.getVersion();
+//        RXTXVersion.loadLibrary("rxtxSerial");
         Initialize();
     }
 
@@ -1365,7 +1366,13 @@ final public class RXTXPort extends SerialPort {
          * threshold bytes, returns 0 on timeout 0 >0 blocks until either
          * threshold # of bytes or len bytes, whichever was lower.
          */
+        @Override
         public synchronized int read(byte b[], int off, int len)                throws IOException {
+            if (b == null) {
+                logger.fine("+++++++ NullPointerException()\n");
+                    logger.fine("RXTXPort:SerialInputStream:read() b == 0");
+                throw new NullPointerException();
+            }
                 logger.fine("RXTXPort:SerialInputStream:read(" + b.length + " " + off + " " + len + ") called" /*+ new String(b) */);
             int result;
             /*
@@ -1377,11 +1384,6 @@ final public class RXTXPort extends SerialPort {
                 throw new IOException();
             }
 
-            if (b == null) {
-                logger.fine("+++++++ NullPointerException()\n");
-                    logger.fine("RXTXPort:SerialInputStream:read() b == 0");
-                throw new NullPointerException();
-            }
 
             if ((off < 0) || (len < 0) || (off + len > b.length)) {
                 logger.fine("+++++++ IndexOutOfBoundsException()\n");
@@ -1458,6 +1460,11 @@ final public class RXTXPort extends SerialPort {
          * same as read( b[], off, len ). Timeouts have not been well tested.
          */
         public synchronized int read(byte b[], int off, int len, byte t[])                throws IOException {
+            if (b == null) {
+                logger.fine("+++++++ NullPointerException()\n");
+                    logger.fine("RXTXPort:SerialInputStream:read() b == 0");
+                throw new NullPointerException();
+            }
                 logger.fine("RXTXPort:SerialInputStream:read(" + b.length + " " + off + " " + len + ") called" /*+ new String(b) */);
             int result;
             /*
@@ -1469,11 +1476,6 @@ final public class RXTXPort extends SerialPort {
                 throw new IOException();
             }
 
-            if (b == null) {
-                logger.fine("+++++++ NullPointerException()\n");
-                    logger.fine("RXTXPort:SerialInputStream:read() b == 0");
-                throw new NullPointerException();
-            }
 
             if ((off < 0) || (len < 0) || (off + len > b.length)) {
                 logger.fine("+++++++ IndexOutOfBoundsException()\n");

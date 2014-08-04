@@ -68,7 +68,7 @@
                     <execution>
                         <id>attach-javadocs</id>
                         <goals>
-                            <goal>jar</goal>
+                            <!--<goal>jar</goal>-->
                         </goals>
                     </execution>
                 </executions>
@@ -87,7 +87,7 @@
                     <execution>
                         <phase>compile</phase>
                         <goals>
-                            <goal>check</goal>
+                            <!--<goal>check</goal>-->
                         </goals>
                     </execution>
                 </executions>
@@ -125,5 +125,13 @@
                 </plugins>                
             </build>
         </profile>
-    </profiles>    
+    </profiles>
+ 
+<!--    <dependencies>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>2.0.3</version>            
+        </dependency>
+    </dependencies> -->
 </project>
