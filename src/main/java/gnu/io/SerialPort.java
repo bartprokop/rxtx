@@ -62,7 +62,7 @@ import java.util.*;
 
 /**
  * @author Trent Jarvi
- * @author BartLomiej P. Prokop
+ * @author Bartłomiej P. Prokop
  * @version 2.3
  */
 public abstract class SerialPort extends CommPort {

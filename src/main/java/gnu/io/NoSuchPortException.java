@@ -61,7 +61,7 @@ package gnu.io;
  * The requested Port does not exist
  *
  * @author Trent Jarvi
- * @author BartLomiej P. Prokop
+ * @author Bartłomiej P. Prokop
  * @version 2.3
  */
 public class NoSuchPortException extends Exception {

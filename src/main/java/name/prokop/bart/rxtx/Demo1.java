@@ -39,7 +39,7 @@ public class Demo1 {
                 p.close();
                 System.out.print("OK");
             } catch (IOException e) {
-                System.out.print("nie uda³o siê: " + e.getMessage());
+                System.out.print("nie udaÅ‚o siÄ™: " + e.getMessage());
             }
             System.out.println();
         }
@@ -78,8 +78,8 @@ public class Demo1 {
     /**
      * Zwraca liste portow szeregowych
      *
-     * @return Zwraca liste portow szeregowych. Zwracana jest tablica stringów.
-     * Stringi te mo¿na u¿yæ w funkcji getSerialPort
+     * @return Zwraca liste portow szeregowych. Zwracana jest tablica stringï¿½w.
+     * Stringi te moï¿½na uï¿½yï¿½ w funkcji getSerialPort
      */
     public static String[] getSerialPortList() {
         Enumeration portList;
@@ -143,8 +143,8 @@ public class Demo1 {
      *
      * @return Zwraca port szeregowy o zadanej nazwie
      * @param portName Nazwa portu
-     * @throws name.prokop.bart.common.BartException W przypadku, gdy nie uda³o
-     * siê otworzyæ portu szeregowego, wraz z opisem.
+     * @throws name.prokop.bart.common.BartException W przypadku, gdy nie udaï¿½o
+     * siï¿½ otworzyï¿½ portu szeregowego, wraz z opisem.
      */
     public static SerialPort getSerialPort(String portName) throws IOException {
         try {
@@ -178,6 +178,6 @@ public class Demo1 {
             throw new IOException("PortInUseException @ " + portName + " : " + e.getMessage());
         }
 
-        throw new IOException("To nie jest port rwnoleg³y");
+        throw new IOException("To nie jest port rwnolegï¿½y");
     }
 }

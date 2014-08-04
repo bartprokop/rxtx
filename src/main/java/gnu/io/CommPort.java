@@ -67,7 +67,7 @@ import java.util.logging.Logger;
  * CommPort
  *
  * @author Trent Jarvi
- * @author BartLomiej P. Prokop
+ * @author Bartłomiej P. Prokop
  * @version 2.3
  */
 public abstract class CommPort {
