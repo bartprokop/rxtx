@@ -11,6 +11,10 @@
     <name>RXTX</name>
     <url>https://github.com/bartprokop/rxtx</url>
     
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <developers>
         <developer>
             <name>Bartłomiej Prokop</name>
@@ -127,7 +131,7 @@
         </profile>
     </profiles>
  
-<!--    <dependencies>
+    <!--    <dependencies>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>annotations</artifactId>
