@@ -59,7 +59,6 @@ package gnu.io;
 
 import java.io.*;
 import java.util.*;
-import java.lang.Math;
 
 /**
  * @author Trent Jarvi
@@ -114,6 +113,7 @@ final class RS485 extends RS485Port {
      */
     private final RS485InputStream in = new RS485InputStream();
 
+    @Override
     public InputStream getInputStream() {
         return in;
     }
@@ -121,8 +121,8 @@ final class RS485 extends RS485Port {
     /**
      * Set the RS485Port parameters
      */
-    public void setRS485PortParams(int b, int d, int s, int p)
-            throws UnsupportedCommOperationException {
+    @Override
+    public void setRS485PortParams(int b, int d, int s, int p) throws UnsupportedCommOperationException {
         nativeSetRS485PortParams(b, d, s, p);
         speed = b;
         dataBits = d;
@@ -141,6 +141,7 @@ final class RS485 extends RS485Port {
      */
     private int speed = 9600;
 
+    @Override
     public int getBaudRate() {
         return speed;
     }
@@ -150,6 +151,7 @@ final class RS485 extends RS485Port {
      */
     private int dataBits = DATABITS_8;
 
+    @Override
     public int getDataBits() {
         return dataBits;
     }
@@ -159,6 +161,7 @@ final class RS485 extends RS485Port {
      */
     private int stopBits = RS485Port.STOPBITS_1;
 
+    @Override
     public int getStopBits() {
         return stopBits;
     }
@@ -168,6 +171,7 @@ final class RS485 extends RS485Port {
      */
     private int parity = RS485Port.PARITY_NONE;
 
+    @Override
     public int getParity() {
         return parity;
     }
@@ -177,6 +181,7 @@ final class RS485 extends RS485Port {
      */
     private int flowmode = RS485Port.FLOWCONTROL_NONE;
 
+    @Override
     public void setFlowControlMode(int flowcontrol) {
         try {
             setflowcontrol(flowcontrol);
@@ -187,6 +192,7 @@ final class RS485 extends RS485Port {
         flowmode = flowcontrol;
     }
 
+    @Override
     public int getFlowControlMode() {
         return flowmode;
     }
@@ -201,18 +207,21 @@ final class RS485 extends RS485Port {
     /**
      * Receive framing control
      */
-    public void enableReceiveFraming(int f)
-            throws UnsupportedCommOperationException {
+    @Override
+    public void enableReceiveFraming(int f) throws UnsupportedCommOperationException {
         throw new UnsupportedCommOperationException("Not supported");
     }
 
+    @Override
     public void disableReceiveFraming() {
     }
 
+    @Override
     public boolean isReceiveFramingEnabled() {
         return false;
     }
 
+    @Override
     public int getReceiveFramingByte() {
         return 0;
     }
@@ -228,10 +237,12 @@ final class RS485 extends RS485Port {
 
     public native void NativeEnableReceiveTimeoutThreshold(int time, int threshold, int InputBuffer);
 
+    @Override
     public void disableReceiveTimeout() {
         enableReceiveTimeout(0);
     }
 
+    @Override
     public void enableReceiveTimeout(int time) {
         if (time >= 0) {
             timeout = time;
@@ -241,10 +252,12 @@ final class RS485 extends RS485Port {
         }
     }
 
+    @Override
     public boolean isReceiveTimeoutEnabled() {
         return (NativeisReceiveTimeoutEnabled());
     }
 
+    @Override
     public int getReceiveTimeout() {
         return (NativegetReceiveTimeout());
     }
@@ -254,6 +267,7 @@ final class RS485 extends RS485Port {
      */
     private int threshold = 0;
 
+    @Override
     public void enableReceiveThreshold(int thresh) {
         if (thresh >= 0) {
             threshold = thresh;
@@ -263,14 +277,17 @@ final class RS485 extends RS485Port {
         }
     }
 
+    @Override
     public void disableReceiveThreshold() {
         enableReceiveThreshold(0);
     }
 
+    @Override
     public int getReceiveThreshold() {
         return threshold;
     }
 
+    @Override
     public boolean isReceiveThresholdEnabled() {
         return (threshold > 0);
     }
@@ -287,18 +304,22 @@ final class RS485 extends RS485Port {
     private int InputBuffer = 0;
     private int OutputBuffer = 0;
 
+    @Override
     public void setInputBufferSize(int size) {
         InputBuffer = size;
     }
 
+    @Override
     public int getInputBufferSize() {
         return (InputBuffer);
     }
 
+    @Override
     public void setOutputBufferSize(int size) {
         OutputBuffer = size;
     }
 
+    @Override
     public int getOutputBufferSize() {
         return (OutputBuffer);
     }
@@ -306,27 +327,36 @@ final class RS485 extends RS485Port {
     /**
      * Line status methods
      */
+    @Override
     public native boolean isDTR();
 
+    @Override
     public native void setDTR(boolean state);
 
+    @Override
     public native void setRTS(boolean state);
 
     private native void setDSR(boolean state);
 
+    @Override
     public native boolean isCTS();
 
+    @Override
     public native boolean isDSR();
 
+    @Override
     public native boolean isCD();
 
+    @Override
     public native boolean isRI();
 
+    @Override
     public native boolean isRTS();
 
     /**
      * Write to the port
      */
+    @Override
     public native void sendBreak(int duration);
 
     private native void writeByte(int b) throws IOException;
@@ -445,6 +475,7 @@ final class RS485 extends RS485Port {
     /**
      * Add an event listener
      */
+    @Override
     public void addEventListener(RS485PortEventListener lsnr)
             throws TooManyListenersException {
         if (SPEventListener != null) {
@@ -459,6 +490,7 @@ final class RS485 extends RS485Port {
     /**
      * Remove the RS485 port event listener
      */
+    @Override
     public void removeEventListener() {
         SPEventListener = null;
         if (monThread != null) {
@@ -467,42 +499,52 @@ final class RS485 extends RS485Port {
         }
     }
 
+    @Override
     public void notifyOnDataAvailable(boolean enable) {
         monThread.Data = enable;
     }
 
+    @Override
     public void notifyOnOutputEmpty(boolean enable) {
         monThread.Output = enable;
     }
 
+    @Override
     public void notifyOnCTS(boolean enable) {
         monThread.CTS = enable;
     }
 
+    @Override
     public void notifyOnDSR(boolean enable) {
         monThread.DSR = enable;
     }
 
+    @Override
     public void notifyOnRingIndicator(boolean enable) {
         monThread.RI = enable;
     }
 
+    @Override
     public void notifyOnCarrierDetect(boolean enable) {
         monThread.CD = enable;
     }
 
+    @Override
     public void notifyOnOverrunError(boolean enable) {
         monThread.OE = enable;
     }
 
+    @Override
     public void notifyOnParityError(boolean enable) {
         monThread.PE = enable;
     }
 
+    @Override
     public void notifyOnFramingError(boolean enable) {
         monThread.FE = enable;
     }
 
+    @Override
     public void notifyOnBreakInterrupt(boolean enable) {
         monThread.BI = enable;
     }
@@ -512,6 +554,7 @@ final class RS485 extends RS485Port {
      */
     private native void nativeClose();
 
+    @Override
     public void close() {
         setDTR(false);
         setDSR(false);
@@ -523,6 +566,7 @@ final class RS485 extends RS485Port {
     /**
      * Finalize the port
      */
+    @Override
     protected void finalize() {
         if (fd > 0) {
             close();
@@ -534,18 +578,22 @@ final class RS485 extends RS485Port {
      */
     class RS485OutputStream extends OutputStream {
 
+        @Override
         public void write(int b) throws IOException {
             writeByte(b);
         }
 
+        @Override
         public void write(byte b[]) throws IOException {
             writeArray(b, 0, b.length);
         }
 
+        @Override
         public void write(byte b[], int off, int len) throws IOException {
             writeArray(b, off, len);
         }
 
+        @Override
         public void flush() throws IOException {
             drain();
         }
@@ -556,15 +604,18 @@ final class RS485 extends RS485Port {
      */
     class RS485InputStream extends InputStream {
 
+        @Override
         public int read() throws IOException {
             dataAvailable = 0;
             return readByte();
         }
 
+        @Override
         public int read(byte b[]) throws IOException {
             return read(b, 0, b.length);
         }
 
+        @Override
         public int read(byte b[], int off, int len) throws IOException {
             dataAvailable = 0;
             int i = 0, Minimum = 0;
@@ -599,6 +650,7 @@ final class RS485 extends RS485Port {
             return Ret;
         }
 
+        @Override
         public int available() throws IOException {
             return nativeavailable();
         }
@@ -625,6 +677,7 @@ final class RS485 extends RS485Port {
         MonitorThread() {
         }
 
+        @Override
         public void run() {
             eventLoop();
         }

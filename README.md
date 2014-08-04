@@ -31,3 +31,6 @@ The intention is to release version 2.2.0 with very minimal changes to 2.1.7r2 c
 
 Resources:
  * https://code.google.com/p/create-lab-commons/source/browse/trunk/java/lib/rxtx/
+ 
+RXTX binary builds provided as a courtesy of Mfizz Inc. (http://mfizz.com/).
+Please see http://mfizz.com/oss/rxtx-for-java for more information.

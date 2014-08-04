@@ -72,7 +72,6 @@ public class RXTXVersion {
     private static final String BASE_NAME = "rxtxSerial";
 
     static {
-//        RXTXVersion.loadLibrary(BASE_NAME);
         provideNativeLibraries();
         displayWelcome();
     }
@@ -88,14 +87,6 @@ public class RXTXVersion {
 
     public static native String nativeGetVersion();
 
-//    private static void loadLibrary(String baseName) {
-//        final String arch = System.getProperty("sun.arch.data.model", "");
-//        baseName += arch;
-//        try {
-//            System.loadLibrary(baseName);
-//        } catch (UnsatisfiedLinkError ex64) {
-//        }
-//    }
     private static String resourceName() {
         return BASE_NAME + System.getProperty("sun.arch.data.model", "") + ".dll";
     }
@@ -146,9 +137,15 @@ public class RXTXVersion {
         System.out.println("Java lib Version   = " + JarVersion);
 
         if (!JarVersion.equals(LibVersion)) {
-            System.out.println("WARNING:  RXTX Version mismatch\n\tJar version = " + JarVersion + "\n\tnative lib Version = " + LibVersion);
+            System.out.println("WARNING:  RXTX Version mismatch");
+        }
+    }
+
+    static void ensureNativeCodeLoaded() {
+        if (VERSION.equals(nativeGetVersion())) {
+            System.out.println("LOADED!");
         } else {
-            System.out.println("RXTXCommDriver:\n\tJar version = " + JarVersion + "\n\tnative lib Version = " + LibVersion);
+            System.out.println("also LOADED!");
         }
     }
 }

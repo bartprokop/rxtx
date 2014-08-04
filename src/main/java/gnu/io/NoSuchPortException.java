@@ -61,8 +61,8 @@ package gnu.io;
  * The requested Port does not exist
  *
  * @author Trent Jarvi
- * @version %I%, %G%
- * @since JDK1.0
+ * @author Bart³omiej P. Prokop
+ * @version 2.3
  */
 public class NoSuchPortException extends Exception {
 

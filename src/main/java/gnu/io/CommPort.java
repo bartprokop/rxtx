@@ -64,12 +64,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author Trent Jarvi
- * @version %I%, %G%
- * @since JDK1.0
- */
-/**
  * CommPort
+ *
+ * @author Trent Jarvi
+ * @author Bart³omiej P. Prokop
+ * @version 2.3
  */
 public abstract class CommPort {
 

@@ -61,6 +61,7 @@ import java.io.FileDescriptor;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.logging.Logger;
 
 /**
  * @author Trent Jarvi
@@ -68,6 +69,8 @@ import java.util.Enumeration;
  * @since JDK1.0
  */
 public class CommPortIdentifier {
+
+    private static final Logger LOGGER = Logger.getLogger(CommPortIdentifier.class.getName());
 
     public static final int PORT_SERIAL = 1;  // rs232 Port
     public static final int PORT_PARALLEL = 2;  // Parallel Port
@@ -82,8 +85,7 @@ public class CommPortIdentifier {
     static CommPortIdentifier CommPortIndex;
     CommPortIdentifier next;
     private int PortType;
-    private final static boolean debug = false;
-    static Object Sync;
+    static final Object Sync = new Object();
     Vector ownershipListener;
 
     /*------------------------------------------------------------------------------
@@ -96,10 +98,6 @@ public class CommPortIdentifier {
      ------------------------------------------------------------------------------*/
     // initialization only done once....
     static {
-        if (debug) {
-            System.out.println("CommPortIdentifier:static initialization()");
-        }
-        Sync = new Object();
         try {
             CommDriver RXTXDriver = (CommDriver) Class.forName("gnu.io.RXTXCommDriver").newInstance();
             RXTXDriver.initialize();
@@ -111,9 +109,7 @@ public class CommPortIdentifier {
 
         OS = System.getProperty("os.name");
         if (OS.toLowerCase().indexOf("linux") == -1) {
-            if (debug) {
-                System.out.println("Have not implemented native_psmisc_report_owner(PortName)); in CommPortIdentifier");
-            }
+            LOGGER.warning("Have not implemented native_psmisc_report_owner(PortName)); in CommPortIdentifier");
         }
         RXTXVersion.getVersion();
     }
@@ -124,7 +120,6 @@ public class CommPortIdentifier {
         PortType = pt;
         next = null;
         RXTXDriver = driver;
-
     }
 
     /*------------------------------------------------------------------------------
@@ -137,10 +132,7 @@ public class CommPortIdentifier {
      comments:
      ------------------------------------------------------------------------------*/
     public static void addPortName(String s, int type, CommDriver c) {
-
-        if (debug) {
-            System.out.println("CommPortIdentifier:addPortName(" + s + ")");
-        }
+        LOGGER.fine("CommPortIdentifier:addPortName(" + s + ")");
         AddIdentifierToList(new CommPortIdentifier(s, null, type, c));
     }
     /*------------------------------------------------------------------------------
@@ -153,22 +145,16 @@ public class CommPortIdentifier {
      ------------------------------------------------------------------------------*/
 
     private static void AddIdentifierToList(CommPortIdentifier cpi) {
-        if (debug) {
-            System.out.println("CommPortIdentifier:AddIdentifierToList()");
-        }
+        LOGGER.fine("CommPortIdentifier:AddIdentifierToList()");
         synchronized (Sync) {
             if (CommPortIndex == null) {
                 CommPortIndex = cpi;
-                if (debug) {
-                    System.out.println("CommPortIdentifier:AddIdentifierToList() null");
-                }
+                LOGGER.fine("CommPortIdentifier:AddIdentifierToList() null");
             } else {
                 CommPortIdentifier index = CommPortIndex;
                 while (index.next != null) {
                     index = index.next;
-                    if (debug) {
-                        System.out.println("CommPortIdentifier:AddIdentifierToList() index.next");
-                    }
+                    LOGGER.fine("CommPortIdentifier:AddIdentifierToList() index.next");
                 }
                 index.next = cpi;
             }
@@ -184,9 +170,7 @@ public class CommPortIdentifier {
      ------------------------------------------------------------------------------*/
 
     public void addPortOwnershipListener(CommPortOwnershipListener c) {
-        if (debug) {
-            System.out.println("CommPortIdentifier:addPortOwnershipListener()");
-        }
+        LOGGER.fine("CommPortIdentifier:addPortOwnershipListener()");
 
         /*  is the Vector instantiated? */
         if (ownershipListener == null) {
@@ -198,34 +182,12 @@ public class CommPortIdentifier {
             ownershipListener.addElement(c);
         }
     }
-    /*------------------------------------------------------------------------------
-     getCurrentOwner()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:    
-     ------------------------------------------------------------------------------*/
 
     public String getCurrentOwner() {
-        if (debug) {
-            System.out.println("CommPortIdentifier:getCurrentOwner()");
-        }
         return (Owner);
     }
-    /*------------------------------------------------------------------------------
-     getName()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:
-     ------------------------------------------------------------------------------*/
 
     public String getName() {
-        if (debug) {
-            System.out.println("CommPortIdentifier:getName()");
-        }
         return (PortName);
     }
     /*------------------------------------------------------------------------------
@@ -238,9 +200,7 @@ public class CommPortIdentifier {
      ------------------------------------------------------------------------------*/
 
     static public CommPortIdentifier getPortIdentifier(String s) throws NoSuchPortException {
-        if (debug) {
-            System.out.println("CommPortIdentifier:getPortIdentifier(" + s + ")");
-        }
+        LOGGER.fine("CommPortIdentifier:getPortIdentifier(" + s + ")");
         CommPortIdentifier index;
 
         synchronized (Sync) {
@@ -264,9 +224,7 @@ public class CommPortIdentifier {
         if (index != null) {
             return index;
         } else {
-            if (debug) {
-                System.out.println("not found!" + s);
-            }
+            LOGGER.fine("not found!" + s);
             throw new NoSuchPortException();
         }
     }
@@ -281,9 +239,9 @@ public class CommPortIdentifier {
 
     static public CommPortIdentifier getPortIdentifier(CommPort p)
             throws NoSuchPortException {
-        if (debug) {
-            System.out.println("CommPortIdentifier:getPortIdentifier(CommPort)");
-        }
+
+        LOGGER.fine("CommPortIdentifier:getPortIdentifier(CommPort)");
+
         CommPortIdentifier c;
         synchronized (Sync) {
             c = CommPortIndex;
@@ -295,9 +253,7 @@ public class CommPortIdentifier {
             return (c);
         }
 
-        if (debug) {
-            System.out.println("not found!" + p.getName());
-        }
+        LOGGER.fine("not found!" + p.getName());
         throw new NoSuchPortException();
     }
     /*------------------------------------------------------------------------------
@@ -310,10 +266,10 @@ public class CommPortIdentifier {
      ------------------------------------------------------------------------------*/
 
     static public Enumeration getPortIdentifiers() {
-        if (debug) {
-            System.out.println("static CommPortIdentifier:getPortIdentifiers()");
-        }
-		//Do not allow anybody get any ports while we are re-initializing
+
+        LOGGER.fine("static CommPortIdentifier:getPortIdentifiers()");
+
+        //Do not allow anybody get any ports while we are re-initializing
         //because the CommPortIndex points to invalid instances during that time
         synchronized (Sync) {
             //Remember old ports in order to restore them for ownership events later
@@ -325,13 +281,13 @@ public class CommPortIdentifier {
             }
             CommPortIndex = null;
             try {
-				//Initialize RXTX: This leads to detecting all ports
+                //Initialize RXTX: This leads to detecting all ports
                 //and writing them into our CommPortIndex through our method
                 //{@link #addPortName(java.lang.String, int, gnu.io.CommDriver)}
                 //This works while lock on Sync is held
                 CommDriver RXTXDriver = (CommDriver) Class.forName("gnu.io.RXTXCommDriver").newInstance();
                 RXTXDriver.initialize();
-				//Restore old CommPortIdentifier objects where possible, 
+                //Restore old CommPortIdentifier objects where possible, 
                 //in order to support proper ownership event handling.
                 //Clients might still have references to old identifiers!
                 CommPortIdentifier curPort = CommPortIndex;
@@ -360,34 +316,12 @@ public class CommPortIdentifier {
         }
         return new CommPortEnumerator();
     }
-    /*------------------------------------------------------------------------------
-     getPortType()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:
-     ------------------------------------------------------------------------------*/
 
     public int getPortType() {
-        if (debug) {
-            System.out.println("CommPortIdentifier:getPortType()");
-        }
         return (PortType);
     }
-    /*------------------------------------------------------------------------------
-     isCurrentlyOwned()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:    
-     ------------------------------------------------------------------------------*/
 
     public synchronized boolean isCurrentlyOwned() {
-        if (debug) {
-            System.out.println("CommPortIdentifier:isCurrentlyOwned()");
-        }
         return (!Available);
     }
     /*------------------------------------------------------------------------------
@@ -400,9 +334,9 @@ public class CommPortIdentifier {
      ------------------------------------------------------------------------------*/
 
     public synchronized CommPort open(FileDescriptor f) throws UnsupportedCommOperationException {
-        if (debug) {
-            System.out.println("CommPortIdentifier:open(FileDescriptor)");
-        }
+
+        LOGGER.fine("CommPortIdentifier:open(FileDescriptor)");
+
         throw new UnsupportedCommOperationException();
     }
 
@@ -421,9 +355,9 @@ public class CommPortIdentifier {
 
     public CommPort open(String TheOwner, int i)
             throws gnu.io.PortInUseException {
-        if (debug) {
-            System.out.println("CommPortIdentifier:open(" + TheOwner + ", " + i + ")");
-        }
+
+        LOGGER.fine("CommPortIdentifier:open(" + TheOwner + ", " + i + ")");
+
         boolean isAvailable;
         synchronized (this) {
             isAvailable = this.Available;
@@ -485,38 +419,26 @@ public class CommPortIdentifier {
             }
         }
     }
-    /*------------------------------------------------------------------------------
-     removePortOwnership()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:
-     ------------------------------------------------------------------------------*/
 
+    /**
+     * removePortOwnership()
+     *
+     * @param c
+     */
     public void removePortOwnershipListener(CommPortOwnershipListener c) {
-        if (debug) {
-            System.out.println("CommPortIdentifier:removePortOwnershipListener()");
-        }
+        LOGGER.fine("CommPortIdentifier:removePortOwnershipListener()");
         /* why is this called twice? */
         if (ownershipListener != null) {
             ownershipListener.removeElement(c);
         }
     }
 
-    /*------------------------------------------------------------------------------
-     internalClosePort()
-     accept:       None
-     perform:      clean up the Ownership information and send the event
-     return:       None
-     exceptions:   None
-     comments:     None
-     ------------------------------------------------------------------------------*/
+    /**
+     * clean up the Ownership information and send the event
+     */
     void internalClosePort() {
         synchronized (this) {
-            if (debug) {
-                System.out.println("CommPortIdentifier:internalClosePort()");
-            }
+            LOGGER.fine("CommPortIdentifier:internalClosePort()");
             Owner = null;
             Available = true;
             commport = null;
@@ -525,19 +447,9 @@ public class CommPortIdentifier {
         }
         fireOwnershipEvent(CommPortOwnershipListener.PORT_UNOWNED);
     }
-    /*------------------------------------------------------------------------------
-     fireOwnershipEvent()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:
-     ------------------------------------------------------------------------------*/
 
     void fireOwnershipEvent(int eventType) {
-        if (debug) {
-            System.out.println("CommPortIdentifier:fireOwnershipEvent( " + eventType + " )");
-        }
+        LOGGER.fine("CommPortIdentifier:fireOwnershipEvent( " + eventType + " )");
         if (ownershipListener != null) {
             CommPortOwnershipListener c;
             for (Enumeration e = ownershipListener.elements();

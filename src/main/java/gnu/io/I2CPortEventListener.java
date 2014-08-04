@@ -1,5 +1,3 @@
-/* Non functional contact tjarvi@qbang for details */
-
 /*-------------------------------------------------------------------------
  |   RXTX License v 2.1 - LGPL v 2.1 + Linking Over Controlled Interface.
  |   RXTX is a native interface to serial ports in java.
