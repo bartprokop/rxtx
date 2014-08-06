@@ -64,6 +64,10 @@ import java.util.TooManyListenersException;
 
 /**
  * LPRPort
+
+* @author Trent Jarvi
+ * @author Bartłomiej P. Prokop
+ * @version 2.3
  */
 final class LPRPort extends ParallelPort {
 
@@ -82,6 +86,7 @@ final class LPRPort extends ParallelPort {
      * Open the named port
      */
     public LPRPort(String name) throws PortInUseException {
+        super(name);
         if (debug) {
             System.out.println("LPRPort:LPRPort(" + name + ")");
         }
@@ -98,7 +103,6 @@ final class LPRPort extends ParallelPort {
          */
         //	try {
         fd = open(name);
-        this.name = name;
         //	} catch ( PortInUseException e ){}
         if (debug) {
             System.out.println("LPRPort:LPRPort(" + name + ") fd = "

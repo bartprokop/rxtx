@@ -62,8 +62,8 @@ import java.util.*;
 
 /**
  * @author Trent Jarvi
- * @version $Id: Raw.java,v 1.1.2.18 2010/01/03 23:15:25 jarvi Exp $
- * @since JDK1.0
+ * @author Bartłomiej P. Prokop
+ * @version 2.3
  */
 final class Raw extends RawPort {
 
@@ -84,6 +84,7 @@ final class Raw extends RawPort {
      * Open the named port
      */
     public Raw(String name) throws PortInUseException {
+        super(name);
         ciAddress = Integer.parseInt(name);
         open(ciAddress);
     }

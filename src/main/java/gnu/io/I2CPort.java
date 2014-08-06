@@ -61,8 +61,8 @@ import java.util.*;
 
 /**
  * @author Trent Jarvi
- * @version %I%, %G%
- * @since JDK1.0
+ * @author Bartłomiej P. Prokop
+ * @version 2.3
  */
 abstract class I2CPort extends CommPort {
 
@@ -139,9 +139,13 @@ abstract class I2CPort extends CommPort {
     public abstract void notifyOnFramingError(boolean enable);
 
     public abstract void notifyOnBreakInterrupt(boolean enable);
+
     /*
-     public abstract void setRcvFifoTrigger(int trigger); 
+     public abstract void setRcvFifoTrigger(int trigger);
      deprecated
      */
+    public I2CPort(String portName) {
+        super(portName);
+    }
 
 }

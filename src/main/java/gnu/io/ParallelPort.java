@@ -61,8 +61,8 @@ import java.util.*;
 
 /**
  * @author Trent Jarvi
- * @version %I%, %G%
- * @since JDK1.0
+ * @author Bartłomiej P. Prokop
+ * @version 2.3
  */
 public abstract class ParallelPort extends CommPort {
 
@@ -100,6 +100,7 @@ public abstract class ParallelPort extends CommPort {
     public abstract void notifyOnError(boolean enable);
 
     public abstract void notifyOnBuffer(boolean enable);
+
     /*
      public int  PAR_EV_ERROR    1
      public int  PAR_EV_BUFFER   2
@@ -158,4 +159,8 @@ public abstract class ParallelPort extends CommPort {
      void sendEvent( int event, boolean state );
      protected void finalize();
      */
+    public ParallelPort(String portName) {
+        super(portName);
+    }
+
 }

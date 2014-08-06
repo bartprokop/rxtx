@@ -168,4 +168,9 @@ public abstract class SerialPort extends CommPort {
     public abstract boolean setCallOutHangup(boolean NoHup) throws UnsupportedCommOperationException;
 
     public abstract boolean getCallOutHangup() throws UnsupportedCommOperationException;
+
+    public SerialPort(String portName) {
+        super(portName);
+    }
+
 }

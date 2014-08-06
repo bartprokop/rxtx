@@ -62,11 +62,8 @@ import java.util.*;
 
 /**
  * @author Trent Jarvi
- * @version,
- * @since JDK1.0
- */
-/**
- * I2C
+ * @author Bartłomiej P. Prokop
+ * @version 2.3
  */
 final class I2C extends I2CPort {
 
@@ -87,6 +84,7 @@ final class I2C extends I2CPort {
      * Open the named port
      */
     public I2C(String name) throws PortInUseException {
+        super(name);
         fd = open(name);
     }
 

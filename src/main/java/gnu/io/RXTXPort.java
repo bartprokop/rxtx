@@ -64,6 +64,10 @@ import java.util.TooManyListenersException;
 import java.util.logging.Logger;
 
 /**
+ * @author Trent Jarvi
+ * @author Bartłomiej P. Prokop
+ * @version 2.3
+ *
  * An extension of gnu.io.SerialPort
  *
  * @see gnu.io.SerialPort
@@ -91,6 +95,7 @@ final public class RXTXPort extends SerialPort {
      * @see gnu.io.SerialPort
      */
     public RXTXPort(String name) throws PortInUseException {
+        super(name);
         logger.fine("RXTXPort:RXTXPort(" + name + ") called");
         /* 
          commapi/javadocs/API_users_guide.html specifies that whenever
@@ -105,7 +110,6 @@ final public class RXTXPort extends SerialPort {
          */
         //	try {
         fd = open(name);
-        this.name = name;
 
         MonitorThreadLock = true;
         monThread = new MonitorThread();
@@ -1052,7 +1056,7 @@ final public class RXTXPort extends SerialPort {
     public void close() {
         synchronized (this) {
 
-            logger.fine("RXTXPort:close( " + this.name + " )");
+            logger.fine("RXTXPort:close( " + this.getName() + " )");
 
             while (IOLocked > 0) {
                 logger.fine("IO is locked " + IOLocked);
@@ -1081,20 +1085,20 @@ final public class RXTXPort extends SerialPort {
         setDTR(false);
         setDSR(false);
 
-        logger.fine("RXTXPort:close( " + this.name + " ) setting monThreadisInterrupted");
+        logger.fine("RXTXPort:close( " + this.getName() + " ) setting monThreadisInterrupted");
         if (!monThreadisInterrupted) {
             removeEventListener();
         }
 
-        logger.fine("RXTXPort:close( " + this.name + " ) calling nativeClose");
-        nativeClose(this.name);
+        logger.fine("RXTXPort:close( " + this.getName() + " ) calling nativeClose");
+        nativeClose(this.getName());
 
-        logger.fine("RXTXPort:close( " + this.name + " ) calling super.close");
+        logger.fine("RXTXPort:close( " + this.getName() + " ) calling super.close");
         super.close();
         fd = 0;
         closeLock = false;
 
-        logger.fine("RXTXPort:close( " + this.name + " ) leaving");
+        logger.fine("RXTXPort:close( " + this.getName() + " ) leaving");
     }
 
     /**

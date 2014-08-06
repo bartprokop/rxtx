@@ -59,8 +59,8 @@ package gnu.io;
 
 /**
  * @author Trent Jarvi
- * @version %I%, %G%
- * @since JDK1.0
+ * @author Bartłomiej P. Prokop
+ * @version 2.3
  */
 public interface CommDriver {
 

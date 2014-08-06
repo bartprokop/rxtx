@@ -74,7 +74,7 @@ public abstract class CommPort {
 
     private static final Logger LOGGER = Logger.getLogger(CommPort.class.getName());
 
-    protected String name;
+    private final String name;
 
     public abstract void enableReceiveFraming(int f) throws UnsupportedCommOperationException;
 
@@ -108,6 +108,10 @@ public abstract class CommPort {
 
     public abstract int getOutputBufferSize();
 
+    public CommPort(String name) {
+        this.name = name;
+    }
+
     public void close() {
         LOGGER.log(Level.FINE, "Closing port {0}", name);
         try {
@@ -129,6 +133,6 @@ public abstract class CommPort {
 
     @Override
     public String toString() {
-        return name;
+        return this.getName();
     }
 }
