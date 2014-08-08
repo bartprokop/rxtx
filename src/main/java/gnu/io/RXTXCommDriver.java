@@ -77,8 +77,6 @@ import java.util.logging.Logger;
 public class RXTXCommDriver implements CommDriver {
 
     private final static Logger logger = Logger.getLogger(RXTXCommDriver.class.getName());
-    private final static boolean devel = false;
-    private final static boolean noVersionOutput = "true".equals(System.getProperty("gnu.io.rxtx.NoVersionOutput"));
 
     static {
         RXTXVersion.ensureNativeCodeLoaded();
@@ -88,7 +86,6 @@ public class RXTXCommDriver implements CommDriver {
      * Get the Serial port prefixes for the running OS
      */
     private String deviceDirectory;
-    private String osName;
 
     private native boolean registerKnownPorts(int PortType);
 
@@ -115,7 +112,7 @@ public class RXTXCommDriver implements CommDriver {
         String ValidPortPrefixes[] = new String[256];
         logger.fine("\nRXTXCommDriver:getValidPortPrefixes()");
         if (CandidatePortPrefixes == null) {
-            logger.fine("\nRXTXCommDriver:getValidPortPrefixes() No ports prefixes known for this System.\nPlease check the port prefixes listed for " + osName + " in RXTXCommDriver:registerScannedPorts()\n");
+            logger.fine("\nRXTXCommDriver:getValidPortPrefixes() No ports prefixes known for this System.\nPlease check the port prefixes listed for " + RXTXVersion.getOsName() + " in RXTXCommDriver:registerScannedPorts()\n");
         }
         int i = 0;
         for (int j = 0; j < CandidatePortPrefixes.length; j++) {
@@ -128,14 +125,14 @@ public class RXTXCommDriver implements CommDriver {
         System.arraycopy(ValidPortPrefixes, 0, returnArray, 0, i);
         if (ValidPortPrefixes[0] == null) {
 
-            logger.fine("\nRXTXCommDriver:getValidPortPrefixes() No ports matched the list assumed for this\nSystem in the directory " + deviceDirectory + ".  Please check the ports listed for \"" + osName + "\" in\nRXTXCommDriver:registerScannedPorts()\nTried:");
+            logger.fine("\nRXTXCommDriver:getValidPortPrefixes() No ports matched the list assumed for this\nSystem in the directory " + deviceDirectory + ".  Please check the ports listed for \"" + RXTXVersion.getOsName() + "\" in\nRXTXCommDriver:registerScannedPorts()\nTried:");
             for (int j = 0; j < CandidatePortPrefixes.length; j++) {
                 logger.fine("\t"
                         + CandidatePortPrefixes[i]);
             }
 
         } else {
-            logger.fine("\nRXTXCommDriver:getValidPortPrefixes()\nThe following port prefixes have been identified as valid on " + osName + ":\n");
+            logger.fine("\nRXTXCommDriver:getValidPortPrefixes()\nThe following port prefixes have been identified as valid on " + RXTXVersion.getOsName() + ":\n");
             /*
              for(int j=0;j<returnArray.length;j++)
              {
@@ -155,11 +152,7 @@ public class RXTXCommDriver implements CommDriver {
         char p[] = {91};
         for (p[0] = 97; p[0] < 123; p[0]++) {
             if (testRead(PortName.concat(new String(p)), PortType)) {
-                CommPortIdentifier.addPortName(
-                        PortName.concat(new String(p)),
-                        PortType,
-                        this
-                );
+                CommPortIdentifier.addPortName(PortName.concat(new String(p)), PortType, this);
             }
         }
         /**
@@ -167,11 +160,7 @@ public class RXTXCommDriver implements CommDriver {
          */
         for (p[0] = 48; p[0] <= 57; p[0]++) {
             if (testRead(PortName.concat(new String(p)), PortType)) {
-                CommPortIdentifier.addPortName(
-                        PortName.concat(new String(p)),
-                        PortType,
-                        this
-                );
+                CommPortIdentifier.addPortName(PortName.concat(new String(p)), PortType, this);
             }
         }
     }
@@ -243,18 +232,16 @@ public class RXTXCommDriver implements CommDriver {
                         continue;
                     }
                     String PortName;
-                    if (osName.toLowerCase().indexOf("windows") == -1) {
+                    if (RXTXVersion.getOsName().toLowerCase().indexOf("windows") == -1) {
                         PortName = deviceDirectory + C;
                     } else {
                         PortName = C;
                     }
 
-                    logger.fine(C
-                            + " " + V);
-                    logger.fine(CU
-                            + " " + Cl);
+                    logger.fine(C + " " + V);
+                    logger.fine(CU + " " + Cl);
 
-                    if (osName.equals("Solaris") || osName.equals("SunOS")) {
+                    if (RXTXVersion.getOsName().equals("Solaris") || RXTXVersion.getOsName().equals("SunOS")) {
                         checkSolaris(PortName, PortType);
                     } else if (testRead(PortName, PortType)) {
                         CommPortIdentifier.addPortName(PortName, PortType, this);
@@ -294,7 +281,6 @@ public class RXTXCommDriver implements CommDriver {
      */
     @Override
     public void initialize() {
-        osName = System.getProperty("os.name");
         deviceDirectory = getDeviceDirectory();
 
         /*
@@ -320,8 +306,7 @@ public class RXTXCommDriver implements CommDriver {
             String PortName = tok.nextToken();
 
             if (testRead(PortName, PortType)) {
-                CommPortIdentifier.addPortName(PortName,
-                        PortType, this);
+                CommPortIdentifier.addPortName(PortName, PortType, this);
             }
         }
     }
@@ -441,12 +426,12 @@ public class RXTXCommDriver implements CommDriver {
 
         logger.fine("scanning device directory " + deviceDirectory + " for ports of type " + PortType);
 
-        if (osName.equals("Windows CE")) {
+        if (RXTXVersion.getOsName().equals("Windows CE")) {
             String[] temp
                     = {"COM1:", "COM2:", "COM3:", "COM4:",
                         "COM5:", "COM6:", "COM7:", "COM8:"};
             CandidateDeviceNames = temp;
-        } else if (osName.toLowerCase().indexOf("windows") != -1) {
+        } else if (RXTXVersion.getOsName().toLowerCase().indexOf("windows") != -1) {
             String[] temp = new String[259];
             for (int i = 1; i <= 256; i++) {
                 temp[i - 1] = "COM" + i;
@@ -455,7 +440,7 @@ public class RXTXCommDriver implements CommDriver {
                 temp[i + 255] = "LPT" + i;
             }
             CandidateDeviceNames = temp;
-        } else if (osName.equals("Solaris") || osName.equals("SunOS")) {
+        } else if (RXTXVersion.getOsName().equals("Solaris") || RXTXVersion.getOsName().equals("SunOS")) {
             /* Solaris uses a few different ways to identify ports.
              They could be /dev/term/a /dev/term0 /dev/cua/a /dev/cuaa
              the /dev/???/a appears to be on more systems.
@@ -524,7 +509,7 @@ public class RXTXCommDriver implements CommDriver {
         switch (PortType) {
             case CommPortIdentifier.PORT_SERIAL:
 
-                logger.fine("scanning for serial ports for os " + osName);
+                logger.fine("scanning for serial ports for os " + RXTXVersion.getOsName());
 
                 /*  There are _many_ possible ports that can be used
                  on Linux.  See below in the fake Linux-all-ports  
@@ -539,7 +524,7 @@ public class RXTXCommDriver implements CommDriver {
 
                  taj
                  */
-                if (osName.equals("Linux")) {
+                if (RXTXVersion.getOsName().equals("Linux")) {
                     String[] Temp = {
                         "ttyS", // linux Serial Ports
                         "ttySA", // for the IPAQs
@@ -548,7 +533,7 @@ public class RXTXCommDriver implements CommDriver {
                         "ttyircomm", // linux IrCommdevices (IrDA serial emu)
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("Linux-all-ports")) {
+                } else if (RXTXVersion.getOsName().equals("Linux-all-ports")) {
                     /* if you want to enumerate all ports ~5000
                      possible, then replace the above with this
                      */
@@ -585,12 +570,12 @@ public class RXTXCommDriver implements CommDriver {
                         "ttyX" // linux SpecialX serial card
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.toLowerCase().indexOf("qnx") != -1) {
+                } else if (RXTXVersion.getOsName().toLowerCase().indexOf("qnx") != -1) {
                     String[] Temp = {
                         "ser"
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("Irix")) {
+                } else if (RXTXVersion.getOsName().equals("Irix")) {
                     String[] Temp = {
                         "ttyc", // irix raw character devices
                         "ttyd", // irix basic serial ports
@@ -603,7 +588,7 @@ public class RXTXCommDriver implements CommDriver {
                         "us" // irix mapped interface
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("FreeBSD")) //FIXME this is probably wrong
+                } else if (RXTXVersion.getOsName().equals("FreeBSD")) //FIXME this is probably wrong
                 {
                     String[] Temp = {
                         "ttyd", //general purpose serial ports
@@ -621,27 +606,25 @@ public class RXTXCommDriver implements CommDriver {
                         "stl" //Stallion EasyIO board or Brumby N 
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("NetBSD")) // FIXME this is probably wrong
+                } else if (RXTXVersion.getOsName().equals("NetBSD")) // FIXME this is probably wrong
                 {
                     String[] Temp = {
                         "tty0" // netbsd serial ports
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("Solaris")
-                        || osName.equals("SunOS")) {
+                } else if (RXTXVersion.getOsName().equals("Solaris") || RXTXVersion.getOsName().equals("SunOS")) {
                     String[] Temp = {
                         "term/",
                         "cua/"
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("HP-UX")) {
+                } else if (RXTXVersion.getOsName().equals("HP-UX")) {
                     String[] Temp = {
                         "tty0p",// HP-UX serial ports
                         "tty1p" // HP-UX serial ports
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("UnixWare")
-                        || osName.equals("OpenUNIX")) {
+                } else if (RXTXVersion.getOsName().equals("UnixWare")                        || RXTXVersion.getOsName().equals("OpenUNIX")) {
                     String[] Temp = {
                         "tty00s", // UW7/OU8 serial ports
                         "tty01s",
@@ -649,7 +632,7 @@ public class RXTXCommDriver implements CommDriver {
                         "tty03s"
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("OpenServer")) {
+                } else if (RXTXVersion.getOsName().equals("OpenServer")) {
                     String[] Temp = {
                         "tty1A", // OSR5 serial ports
                         "tty2A",
@@ -685,17 +668,17 @@ public class RXTXCommDriver implements CommDriver {
                         "ttyu16A"
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("Compaq's Digital UNIX") || osName.equals("OSF1")) {
+                } else if (RXTXVersion.getOsName().equals("Compaq's Digital UNIX") || RXTXVersion.getOsName().equals("OSF1")) {
                     String[] Temp = {
                         "tty0" //  Digital Unix serial ports
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("BeOS")) {
+                } else if (RXTXVersion.getOsName().equals("BeOS")) {
                     String[] Temp = {
                         "serial" // BeOS serial ports
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.equals("Mac OS X")) {
+                } else if (RXTXVersion.getOsName().equals("Mac OS X")) {
                     String[] Temp = {
                         // Keyspan USA-28X adapter, USB port 1
                         "cu.KeyUSA28X191.",
@@ -711,24 +694,24 @@ public class RXTXCommDriver implements CommDriver {
                         "tty.KeyUSA19181."
                     };
                     CandidatePortPrefixes = Temp;
-                } else if (osName.toLowerCase().indexOf("windows") != -1) {
+                } else if (RXTXVersion.getOsName().toLowerCase().indexOf("windows") != -1) {
                     String[] Temp = {
                         "COM" // win32 serial ports
                     //"//./COM"    // win32 serial ports
                     };
                     CandidatePortPrefixes = Temp;
                 } else {
-                    logger.fine("No valid prefixes for serial ports have been entered for " + osName + " in RXTXCommDriver.java.  This may just be a typo in the method registerScanPorts().");
+                    logger.fine("No valid prefixes for serial ports have been entered for " + RXTXVersion.getOsName() + " in RXTXCommDriver.java.  This may just be a typo in the method registerScanPorts().");
                 }
                 break;
 
             case CommPortIdentifier.PORT_PARALLEL:
-                logger.fine("scanning for parallel ports for os " + osName);
+                logger.fine("scanning for parallel ports for os " + RXTXVersion.getOsName());
                 /**
                  * Get the Parallel port prefixes for the running os Holger
                  * Lehmann July 12, 1999 IBM
                  */
-                if (osName.equals("Linux") /*
+                if (RXTXVersion.getOsName().equals("Linux") /*
                          || osName.equals("NetBSD") FIXME
                          || osName.equals("HP-UX")  FIXME
                          || osName.equals("Irix")   FIXME
@@ -739,12 +722,12 @@ public class RXTXCommDriver implements CommDriver {
                         "lp" // linux printer port
                     };
                     CandidatePortPrefixes = temp;
-                } else if (osName.equals("FreeBSD")) {
+                } else if (RXTXVersion.getOsName().equals("FreeBSD")) {
                     String[] temp = {
                         "lpt"
                     };
                     CandidatePortPrefixes = temp;
-                } else if (osName.toLowerCase().indexOf("windows") != -1) {
+                } else if (RXTXVersion.getOsName().toLowerCase().indexOf("windows") != -1) {
                     String[] temp = {
                         "LPT"
                     };
@@ -778,7 +761,7 @@ public class RXTXCommDriver implements CommDriver {
         try {
             switch (PortType) {
                 case CommPortIdentifier.PORT_SERIAL:
-                    if (osName.toLowerCase().indexOf("windows") == -1) {
+                    if (RXTXVersion.getOsName().toLowerCase().indexOf("windows") == -1) {
                         return new RXTXPort(PortName);
                     } else {
                         return new RXTXPort(deviceDirectory + PortName);

@@ -65,8 +65,8 @@ import java.util.logging.Logger;
 
 /**
  * @author Trent Jarvi
- * @version %I%, %G%
- * @since JDK1.0
+ * @author Bartłomiej P. Prokop
+ * @version 2.3
  */
 public class CommPortIdentifier {
 
@@ -77,14 +77,14 @@ public class CommPortIdentifier {
     public static final int PORT_I2C = 3;  // i2c Port
     public static final int PORT_RS485 = 4;  // rs485 Port
     public static final int PORT_RAW = 5;  // Raw Port
-    private String PortName;
+    private final String portName;
     private boolean Available = true;
     private String Owner;
-    private CommPort commport;
+    private CommPort commPort;
     private CommDriver RXTXDriver;
     static CommPortIdentifier CommPortIndex;
     CommPortIdentifier next;
-    private int PortType;
+    private final int portType;
     static final Object Sync = new Object();
     Vector ownershipListener;
 
@@ -105,21 +105,19 @@ public class CommPortIdentifier {
             System.err.println(e + " thrown while loading " + "gnu.io.RXTXCommDriver");
         }
 
-        String OS;
-
-        OS = System.getProperty("os.name");
+        String OS = System.getProperty("os.name");
         if (OS.toLowerCase().indexOf("linux") == -1) {
             LOGGER.warning("Have not implemented native_psmisc_report_owner(PortName)); in CommPortIdentifier");
         }
-        RXTXVersion.getVersion();
+        RXTXVersion.ensureNativeCodeLoaded();
     }
 
-    CommPortIdentifier(String pn, CommPort cp, int pt, CommDriver driver) {
-        PortName = pn;
-        commport = cp;
-        PortType = pt;
-        next = null;
-        RXTXDriver = driver;
+    CommPortIdentifier(String portName, CommPort commPort, int portType, CommDriver driver) {
+        this.portName = portName;
+        this.commPort = commPort;
+        this.portType = portType;
+        this.next = null;
+        this.RXTXDriver = driver;
     }
 
     /*------------------------------------------------------------------------------
@@ -188,16 +186,8 @@ public class CommPortIdentifier {
     }
 
     public String getName() {
-        return (PortName);
+        return portName;
     }
-    /*------------------------------------------------------------------------------
-     getPortIdentifier()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:   
-     ------------------------------------------------------------------------------*/
 
     static public CommPortIdentifier getPortIdentifier(String s) throws NoSuchPortException {
         LOGGER.fine("CommPortIdentifier:getPortIdentifier(" + s + ")");
@@ -205,7 +195,7 @@ public class CommPortIdentifier {
 
         synchronized (Sync) {
             index = CommPortIndex;
-            while (index != null && !index.PortName.equals(s)) {
+            while (index != null && !index.portName.equals(s)) {
                 index = index.next;
             }
             if (index == null) {
@@ -216,7 +206,7 @@ public class CommPortIdentifier {
                  */
                 getPortIdentifiers();
                 index = CommPortIndex;
-                while (index != null && !index.PortName.equals(s)) {
+                while (index != null && !index.portName.equals(s)) {
                     index = index.next;
                 }
             }
@@ -237,15 +227,14 @@ public class CommPortIdentifier {
      comments:    
      ------------------------------------------------------------------------------*/
 
-    static public CommPortIdentifier getPortIdentifier(CommPort p)
-            throws NoSuchPortException {
+    static public CommPortIdentifier getPortIdentifier(CommPort p) throws NoSuchPortException {
 
         LOGGER.fine("CommPortIdentifier:getPortIdentifier(CommPort)");
 
         CommPortIdentifier c;
         synchronized (Sync) {
             c = CommPortIndex;
-            while (c != null && c.commport != p) {
+            while (c != null && c.commPort != p) {
                 c = c.next;
             }
         }
@@ -276,7 +265,7 @@ public class CommPortIdentifier {
             HashMap oldPorts = new HashMap();
             CommPortIdentifier p = CommPortIndex;
             while (p != null) {
-                oldPorts.put(p.PortName, p);
+                oldPorts.put(p.portName, p);
                 p = p.next;
             }
             CommPortIndex = null;
@@ -293,8 +282,8 @@ public class CommPortIdentifier {
                 CommPortIdentifier curPort = CommPortIndex;
                 CommPortIdentifier prevPort = null;
                 while (curPort != null) {
-                    CommPortIdentifier matchingOldPort = (CommPortIdentifier) oldPorts.get(curPort.PortName);
-                    if (matchingOldPort != null && matchingOldPort.PortType == curPort.PortType) {
+                    CommPortIdentifier matchingOldPort = (CommPortIdentifier) oldPorts.get(curPort.portName);
+                    if (matchingOldPort != null && matchingOldPort.portType == curPort.portType) {
                         //replace new port by old one
                         matchingOldPort.RXTXDriver = curPort.RXTXDriver;
                         matchingOldPort.next = curPort.next;
@@ -318,7 +307,7 @@ public class CommPortIdentifier {
     }
 
     public int getPortType() {
-        return (PortType);
+        return portType;
     }
 
     public synchronized boolean isCurrentlyOwned() {
@@ -394,23 +383,23 @@ public class CommPortIdentifier {
         }
         //At this point, the CommPortIdentifier is owned by us.
         try {
-            if (commport == null) {
-                commport = RXTXDriver.getCommPort(PortName, PortType);
+            if (commPort == null) {
+                commPort = RXTXDriver.getCommPort(portName, portType);
             }
-            if (commport != null) {
+            if (commPort != null) {
                 fireOwnershipEvent(CommPortOwnershipListener.PORT_OWNED);
-                return commport;
+                return commPort;
             } else {
                 String err_msg;
                 try {
-                    err_msg = native_psmisc_report_owner(PortName);
+                    err_msg = native_psmisc_report_owner(portName);
                 } catch (Throwable t) {
-                    err_msg = "Port " + PortName + " already owned... unable to open.";
+                    err_msg = "Port " + portName + " already owned... unable to open.";
                 }
                 throw new gnu.io.PortInUseException(err_msg);
             }
         } finally {
-            if (commport == null) {
+            if (commPort == null) {
                 //something went wrong reserving the commport -> unown the port
                 synchronized (this) {
                     this.Available = true;
@@ -441,7 +430,7 @@ public class CommPortIdentifier {
             LOGGER.fine("CommPortIdentifier:internalClosePort()");
             Owner = null;
             Available = true;
-            commport = null;
+            commPort = null;
             /*  this tosses null pointer?? */
             notifyAll();
         }

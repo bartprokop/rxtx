@@ -62,14 +62,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A class to keep the current version in
  */
 public class RXTXVersion {
 
-    private static final String VERSION = "RXTX-2.2";
+    private static final Logger LOGGER = Logger.getLogger(RXTXVersion.class.getName());
+    private static final String EXPECTED_NATIVE_VERSION = "RXTX-2.2-20081207 Cloudhopper Build rxtx.cloudhopper.net";
     private static final String BASE_NAME = "rxtxSerial";
+    private static final String OSNAME = System.getProperty("os.name");
 
     static {
         provideNativeLibraries();
@@ -81,8 +85,8 @@ public class RXTXVersion {
      *
      * @return a string representing the version "RXTX-1.4-9"
      */
-    public static String getVersion() {
-        return VERSION;
+    public static String getExpectedNativeVersion() {
+        return EXPECTED_NATIVE_VERSION;
     }
 
     public static native String nativeGetVersion();
@@ -94,6 +98,7 @@ public class RXTXVersion {
     private static void provideNativeLibraries() {
         try {
             System.out.println("We will use: " + resourceName());
+            System.out.println(OSNAME);
             File outFile = new File(System.getProperty("java.io.tmpdir"));
             outFile = new File(outFile, resourceName());
             try (InputStream is = RXTXVersion.class.getResourceAsStream(resourceName());
@@ -118,34 +123,36 @@ public class RXTXVersion {
         return count;
     }
 
+    /**
+     * Perform a crude check to make sure people don't mix versions of the Jar
+     * and native lib
+     *
+     * Mixing the libs can create a nightmare.
+     *
+     * It could be possible to move this over to RXTXVersion but All we want to
+     * do is warn people when first loading the Library.
+     */
     static void displayWelcome() {
-        /*
-         Perform a crude check to make sure people don't mix
-         versions of the Jar and native lib
-
-         Mixing the libs can create a nightmare.
-
-         It could be possible to move this over to RXTXVersion
-         but All we want to do is warn people when first loading
-         the Library.
-         */
-        final String JarVersion = RXTXVersion.getVersion();
+        final String JarVersion = RXTXVersion.getExpectedNativeVersion();
         final String LibVersion = RXTXVersion.nativeGetVersion();
-        System.out.println("Stable Library");
-        System.out.println("=========================================");
-        System.out.println("Native lib Version = " + LibVersion);
-        System.out.println("Java lib Version   = " + JarVersion);
+        LOGGER.info("Stable Library");
+        LOGGER.info("=========================================");
+        LOGGER.log(Level.INFO, "Native lib Version = {0}", LibVersion);
+        LOGGER.log(Level.INFO, "Java lib Version   = {0}", JarVersion);
 
         if (!JarVersion.equals(LibVersion)) {
-            System.out.println("WARNING:  RXTX Version mismatch");
+            LOGGER.warning("RXTX Version mismatch");
         }
     }
 
     static void ensureNativeCodeLoaded() {
-        if (VERSION.equals(nativeGetVersion())) {
-            System.out.println("LOADED!");
-        } else {
-            System.out.println("also LOADED!");
+        if (!getExpectedNativeVersion().equals(nativeGetVersion())) {
+            System.out.print("");
         }
     }
+
+    public static String getOsName() {
+        return OSNAME;
+    }
+
 }

@@ -61,8 +61,8 @@ package gnu.io;
  * Exception thrown when a method does not support the requested functionality.
  *
  * @author Trent Jarvi
- * @version %I%, %G%
- * @since JDK1.0
+ * @author Bartłomiej P. Prokop
+ * @version 2.3
  */
 public class UnsupportedCommOperationException extends Exception {
 
