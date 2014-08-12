@@ -325,13 +325,10 @@ final public class RXTXPort extends SerialPort {
      * Receive framing control
      *
      * @param f framming
-     * @throws UnsupportedCommOperationException
+     * @throws UnsupportedCommOperationException always, as not implemented
      */
     @Override
-    public void enableReceiveFraming(int f)
-            throws UnsupportedCommOperationException {
-
-        logger.fine("RXTXPort:enableReceiveFramming() throwing exception");
+    public void enableReceiveFraming(int f) throws UnsupportedCommOperationException {
         throw new UnsupportedCommOperationException("Not supported");
     }
 
@@ -393,7 +390,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param time
+     * @param time timeout
      */
     @Override
     public void enableReceiveTimeout(int time) {
@@ -492,12 +489,10 @@ final public class RXTXPort extends SerialPort {
     private int OutputBuffer = 0;
 
     /**
-     * @param size
+     * @param size new buffer size
      */
     public void setInputBufferSize(int size) {
-
-        logger.fine("RXTXPort:setInputBufferSize( "
-                + size + ") called");
+        logger.fine("RXTXPort:setInputBufferSize( " + size + ") called");
         if (size < 0) {
             throw new IllegalArgumentException(
                     "Unexpected negative buffer size value"
@@ -519,7 +514,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param size
+     * @param size output buffer size
      */
     public void setOutputBufferSize(int size) {
 
@@ -557,12 +552,12 @@ final public class RXTXPort extends SerialPort {
     public native boolean isDTR();
 
     /**
-     * @param state
+     * @param state state flag
      */
     public native void setDTR(boolean state);
 
     /**
-     * @param state
+     * @param state state flag
      */
     public native void setRTS(boolean state);
 
@@ -596,7 +591,7 @@ final public class RXTXPort extends SerialPort {
     /**
      * Write to the port
      *
-     * @param duration
+     * @param duration duration time
      */
     public native void sendBreak(int duration);
 
@@ -609,6 +604,9 @@ final public class RXTXPort extends SerialPort {
 
     /**
      * RXTXPort read methods
+     *
+     * @return number of bytes
+     * @throws IOException when IO error occurs
      */
     protected native int nativeavailable() throws IOException;
 
@@ -658,8 +656,8 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param event
-     * @param state
+     * @param event event
+     * @param state state
      * @return boolean true if the port is closing
      */
     public boolean sendEvent(int event, boolean state) {
@@ -916,7 +914,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param enable
+     * @param enable notify flag
      */
     @Override
     public void notifyOnOutputEmpty(boolean enable) {
@@ -932,7 +930,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param enable
+     * @param enable notify flag
      */
     @Override
     public void notifyOnCTS(boolean enable) {
@@ -947,7 +945,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param enable
+     * @param enable notify flag
      */
     @Override
     public void notifyOnDSR(boolean enable) {
@@ -962,7 +960,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param enable
+     * @param enable notify flag
      */
     @Override
     public void notifyOnRingIndicator(boolean enable) {
@@ -977,7 +975,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param enable
+     * @param enable notify flag
      */
     @Override
     public void notifyOnCarrierDetect(boolean enable) {
@@ -992,7 +990,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param enable
+     * @param enable notify flag
      */
     @Override
     public void notifyOnOverrunError(boolean enable) {
@@ -1006,7 +1004,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param enable
+     * @param enable notify flag
      */
     @Override
     public void notifyOnParityError(boolean enable) {
@@ -1019,7 +1017,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param enable
+     * @param enable notify flag
      */
     @Override
     public void notifyOnFramingError(boolean enable) {
@@ -1032,7 +1030,7 @@ final public class RXTXPort extends SerialPort {
     }
 
     /**
-     * @param enable
+     * @param enable notify flag
      */
     @Override
     public void notifyOnBreakInterrupt(boolean enable) {
@@ -1577,7 +1575,7 @@ final public class RXTXPort extends SerialPort {
     /**
      * A dummy method added so RXTX compiles on Kaffee
      *
-     * @param trigger
+     * @param trigger trigger value
      * @deprecated deprecated but used in Kaffe
      */
     public void setRcvFifoTrigger(int trigger) {
@@ -1650,13 +1648,11 @@ final public class RXTXPort extends SerialPort {
      *
      * @param port the name of the port thats been preopened
      * @return BaudRate on success
-     * @throws UnsupportedCommOperationException; This will not behave as
+     * @throws UnsupportedCommOperationException This will not behave as
      * expected with custom speeds
      *
      */
-    public static int staticGetBaudRate(String port)
-            throws UnsupportedCommOperationException {
-
+    public static int staticGetBaudRate(String port) throws UnsupportedCommOperationException {
         logger.fine(
                 "RXTXPort:staticGetBaudRate( " + port + " )");
         return (nativeStaticGetBaudRate(port));
@@ -1668,14 +1664,10 @@ final public class RXTXPort extends SerialPort {
      *
      * @param port the name of the port thats been preopened
      * @return DataBits on success
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
-    public static int staticGetDataBits(String port)
-            throws UnsupportedCommOperationException {
-
-        logger.fine(
-                "RXTXPort:staticGetDataBits( " + port + " )");
+    public static int staticGetDataBits(String port) throws UnsupportedCommOperationException {
+        logger.fine("RXTXPort:staticGetDataBits( " + port + " )");
         return (nativeStaticGetDataBits(port));
     }
 
@@ -1685,8 +1677,7 @@ final public class RXTXPort extends SerialPort {
      *
      * @param port the name of the port thats been preopened
      * @return Parity on success
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on exception
      */
     public static int staticGetParity(String port)
             throws UnsupportedCommOperationException {
@@ -1702,8 +1693,7 @@ final public class RXTXPort extends SerialPort {
      *
      * @param port the name of the port thats been preopened
      * @return StopBits on success
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
     public static int staticGetStopBits(String port)
             throws UnsupportedCommOperationException {
@@ -1725,12 +1715,10 @@ final public class RXTXPort extends SerialPort {
      * @param s stopbits
      * @param p parity
      *
-     * @throws UnsupportedCommOperationException
+     * @throws UnsupportedCommOperationException on error
      * @see gnu.io.UnsupportedCommOperationException
      */
-    public static void staticSetSerialPortParams(String f, int b, int d,
-            int s, int p)
-            throws UnsupportedCommOperationException {
+    public static void staticSetSerialPortParams(String f, int b, int d, int s, int p) throws UnsupportedCommOperationException {
 
         logger.fine(
                 "RXTXPort:staticSetSerialPortParams( "
@@ -1746,9 +1734,10 @@ final public class RXTXPort extends SerialPort {
      * some software can appear to set the DSR before 'opening' the port a
      * second time later on.
      *
+     * @param port port name
+     * @param flag flag value
      * @return true on success
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
     public static boolean staticSetDSR(String port, boolean flag)
             throws UnsupportedCommOperationException {
@@ -1766,9 +1755,10 @@ final public class RXTXPort extends SerialPort {
      * some software can appear to set the DTR before 'opening' the port a
      * second time later on.
      *
+     * @param port port name
+     * @param flag flag value
      * @return true on success
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
     public static boolean staticSetDTR(String port, boolean flag)
             throws UnsupportedCommOperationException {
@@ -1786,9 +1776,10 @@ final public class RXTXPort extends SerialPort {
      * some software can appear to set the RTS before 'opening' the port a
      * second time later on.
      *
+     * @param port port name
+     * @param flag falg value
      * @return none
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
     public static boolean staticSetRTS(String port, boolean flag)
             throws UnsupportedCommOperationException {
@@ -1804,10 +1795,9 @@ final public class RXTXPort extends SerialPort {
      *
      * find the fd and return RTS without using a Java open() call
      *
-     * @param port
+     * @param port port name
      * @return true if asserted
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
     public static boolean staticIsRTS(String port)
             throws UnsupportedCommOperationException {
@@ -1822,10 +1812,9 @@ final public class RXTXPort extends SerialPort {
      *
      * find the fd and return CD without using a Java open() call
      *
-     * @param port
+     * @param port port name
      * @return true if asserted
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
     public static boolean staticIsCD(String port)
             throws UnsupportedCommOperationException {
@@ -1840,10 +1829,9 @@ final public class RXTXPort extends SerialPort {
      *
      * find the fd and return CTS without using a Java open() call
      *
-     * @param port
+     * @param port port name
      * @return true if asserted
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
     public static boolean staticIsCTS(String port)
             throws UnsupportedCommOperationException {
@@ -1858,10 +1846,9 @@ final public class RXTXPort extends SerialPort {
      *
      * find the fd and return DSR without using a Java open() call
      *
-     * @param port
+     * @param port port name
      * @return true if asserted
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
     public static boolean staticIsDSR(String port)
             throws UnsupportedCommOperationException {
@@ -1876,10 +1863,9 @@ final public class RXTXPort extends SerialPort {
      *
      * find the fd and return DTR without using a Java open() call
      *
-     * @param port
+     * @param port port name
      * @return true if asserted
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
     public static boolean staticIsDTR(String port)
             throws UnsupportedCommOperationException {
@@ -1894,10 +1880,9 @@ final public class RXTXPort extends SerialPort {
      *
      * find the fd and return RI without using a Java open() call
      *
-     * @param port
+     * @param port port name
      * @return true if asserted
-     * @throws UnsupportedCommOperationException;
-     *
+     * @throws UnsupportedCommOperationException on error
      */
     public static boolean staticIsRI(String port) throws UnsupportedCommOperationException {
         logger.fine("RXTXPort:staticIsRI( " + port + " )");
@@ -1909,9 +1894,8 @@ final public class RXTXPort extends SerialPort {
      * supported on all operating systems.
      *
      * @return int the Parity Error Character
-     * @throws UnsupportedCommOperationException;
-     *
-     * Anyone know how to do this in Unix?
+     * @throws UnsupportedCommOperationException on error Anyone know how to do
+     * this in Unix?
      */
     @Override
     public byte getParityErrorChar() throws UnsupportedCommOperationException {
@@ -1931,9 +1915,8 @@ final public class RXTXPort extends SerialPort {
      *
      * @param b Parity Error Character
      * @return boolean true on success
-     * @throws UnsupportedCommOperationException;
-     *
-     * Anyone know how to do this in Unix?
+     * @throws UnsupportedCommOperationException on error Anyone know how to do
+     * this in Unix?
      */
     @Override
     public boolean setParityErrorChar(byte b)
@@ -1947,9 +1930,8 @@ final public class RXTXPort extends SerialPort {
      * supported on all operating systems.
      *
      * @return int the End of Input Character
-     * @throws UnsupportedCommOperationException;
-     *
-     * Anyone know how to do this in Unix?
+     * @throws UnsupportedCommOperationException on error Anyone know how to do
+     * this in Unix?
      */
     @Override
     public byte getEndOfInputChar() throws UnsupportedCommOperationException {
@@ -1968,7 +1950,7 @@ final public class RXTXPort extends SerialPort {
      *
      * @param b End Of Input Character
      * @return boolean true on success
-     * @throws UnsupportedCommOperationException;
+     * @throws UnsupportedCommOperationException on error
      */
     @Override
     public boolean setEndOfInputChar(byte b) throws UnsupportedCommOperationException {
@@ -1984,7 +1966,7 @@ final public class RXTXPort extends SerialPort {
      * "8250", "16450", "16550", "16550A", "16650", "16550V2" or "16750".
      * @param test boolean flag to determin if the UART should be tested.
      * @return boolean true on success
-     * @throws UnsupportedCommOperationException;
+     * @throws UnsupportedCommOperationException on error
      */
     @Override
     public boolean setUARTType(String type, boolean test)
@@ -2000,7 +1982,7 @@ final public class RXTXPort extends SerialPort {
      *
      * @return type String representation of the UART type which mayb be "none",
      * "8250", "16450", "16550", "16550A", "16650", "16550V2" or "16750".
-     * @throws UnsupportedCommOperationException;
+     * @throws UnsupportedCommOperationException on error
      */
     @Override
     public String getUARTType() throws UnsupportedCommOperationException {
@@ -2014,8 +1996,8 @@ final public class RXTXPort extends SerialPort {
      * @param BaudBase The clock frequency divided by 16. Default BaudBase is
      * 115200.
      * @return true on success
-     * @throws UnsupportedCommOperationException, IOException
-     * @throws java.io.IOException
+     * @throws UnsupportedCommOperationException on error
+     * @throws java.io.IOException on IO error
      */
     @Override
     public boolean setBaudBase(int BaudBase) throws UnsupportedCommOperationException, IOException {
@@ -2027,8 +2009,8 @@ final public class RXTXPort extends SerialPort {
      * Extension to CommAPI
      *
      * @return BaudBase
-     * @throws UnsupportedCommOperationException, IOException
-     * @throws java.io.IOException
+     * @throws UnsupportedCommOperationException on error
+     * @throws java.io.IOException on error
      */
     @Override
     public int getBaudBase() throws UnsupportedCommOperationException, IOException {
@@ -2040,10 +2022,10 @@ final public class RXTXPort extends SerialPort {
      * Extension to CommAPI. Set Baud Base to 38600 on Linux and W32 before
      * using.
      *
-     * @param Divisor
-     * @return
-     * @throws UnsupportedCommOperationException, IOException
-     * @throws java.io.IOException
+     * @param Divisor divisor value
+     * @return status
+     * @throws UnsupportedCommOperationException on error
+     * @throws java.io.IOException on error
      */
     @Override
     public boolean setDivisor(int Divisor) throws UnsupportedCommOperationException, IOException {
@@ -2054,9 +2036,9 @@ final public class RXTXPort extends SerialPort {
     /**
      * Extension to CommAPI
      *
-     * @return Divisor;
-     * @throws UnsupportedCommOperationException, IOException
-     * @throws java.io.IOException
+     * @return Divisor divisor value
+     * @throws UnsupportedCommOperationException on error
+     * @throws java.io.IOException on error
      */
     @Override
     public int getDivisor() throws UnsupportedCommOperationException, IOException {
@@ -2067,8 +2049,8 @@ final public class RXTXPort extends SerialPort {
     /**
      * Extension to CommAPI returns boolean true on success
      *
-     * @return
-     * @throws UnsupportedCommOperationException
+     * @return if low latency
+     * @throws UnsupportedCommOperationException on error
      */
     @Override
     public boolean setLowLatency() throws UnsupportedCommOperationException {
@@ -2080,8 +2062,8 @@ final public class RXTXPort extends SerialPort {
     /**
      * Extension to CommAPI returns boolean true on success
      *
-     * @return
-     * @throws UnsupportedCommOperationException
+     * @return low latency value
+     * @throws UnsupportedCommOperationException on error
      */
     @Override
     public boolean getLowLatency() throws UnsupportedCommOperationException {
@@ -2093,8 +2075,8 @@ final public class RXTXPort extends SerialPort {
      * Extension to CommAPI returns boolean true on success
      *
      * @param NoHup
-     * @return
-     * @throws UnsupportedCommOperationException
+     * @return if hangup
+     * @throws UnsupportedCommOperationException on error
      */
     @Override
     public boolean setCallOutHangup(boolean NoHup) throws UnsupportedCommOperationException {

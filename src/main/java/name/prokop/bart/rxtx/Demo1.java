@@ -143,7 +143,7 @@ public class Demo1 {
      *
      * @return Zwraca port szeregowy o zadanej nazwie
      * @param portName Nazwa portu
-     * @throws name.prokop.bart.common.BartException W przypadku, gdy nie uda�o
+     * @throws IOException W przypadku, gdy nie uda�o
      * si� otworzy� portu szeregowego, wraz z opisem.
      */
     public static SerialPort getSerialPort(String portName) throws IOException {

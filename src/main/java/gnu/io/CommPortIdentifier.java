@@ -88,15 +88,11 @@ public class CommPortIdentifier {
     static final Object Sync = new Object();
     Vector ownershipListener;
 
-    /*------------------------------------------------------------------------------
-     static {}   aka initialization
-     accept:       -
-     perform:      load the rxtx driver
-     return:       -
-     exceptions:   Throwable
-     comments:     static block to initialize the class
-     ------------------------------------------------------------------------------*/
-    // initialization only done once....
+    /**
+     * static {} aka initialization accept: - perform: load the rxtx driver
+     * return: - exceptions: Throwable comments: static block to initialize the
+     * class
+     */
     static {
         try {
             CommDriver RXTXDriver = (CommDriver) Class.forName("gnu.io.RXTXCommDriver").newInstance();
@@ -120,28 +116,24 @@ public class CommPortIdentifier {
         this.RXTXDriver = driver;
     }
 
-    /*------------------------------------------------------------------------------
-     addPortName()
-     accept:         Name of the port s, Port type, 
-     reverence to RXTXCommDriver.
-     perform:        place a new CommPortIdentifier in the linked list
-     return: 	none.
-     exceptions:     none.
-     comments:
-     ------------------------------------------------------------------------------*/
+    /**
+     * addPortName accept: Name of the port s, Port type, reverence to
+     * RXTXCommDriver. perform: place a new CommPortIdentifier in the linked
+     * list return: none. exceptions: none. comments:
+     *
+     * @param s - port name
+     * @param type - port type
+     * @param c - reference for ComDriver
+     */
     public static void addPortName(String s, int type, CommDriver c) {
         LOGGER.fine("CommPortIdentifier:addPortName(" + s + ")");
         AddIdentifierToList(new CommPortIdentifier(s, null, type, c));
     }
-    /*------------------------------------------------------------------------------
-     AddIdentifierToList()
-     accept:        The cpi to add to the list. 
-     perform:        
-     return: 	
-     exceptions:    
-     comments:
-     ------------------------------------------------------------------------------*/
 
+    /**
+     * AddIdentifierToList() accept: The cpi to add to the list. perform:
+     * return: exceptions: comments:
+     */
     private static void AddIdentifierToList(CommPortIdentifier cpi) {
         LOGGER.fine("CommPortIdentifier:AddIdentifierToList()");
         synchronized (Sync) {
@@ -158,15 +150,12 @@ public class CommPortIdentifier {
             }
         }
     }
-    /*------------------------------------------------------------------------------
-     addPortOwnershipListener()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:   
-     ------------------------------------------------------------------------------*/
 
+    /**
+     * addPortOwnershipListener()
+     *
+     * @param c - listener to add
+     */
     public void addPortOwnershipListener(CommPortOwnershipListener c) {
         LOGGER.fine("CommPortIdentifier:addPortOwnershipListener()");
 
@@ -175,14 +164,13 @@ public class CommPortIdentifier {
             ownershipListener = new Vector();
         }
 
-        /* is the ownership listener already in the list? */
-        if (ownershipListener.contains(c) == false) {
+        if (!ownershipListener.contains(c)) {
             ownershipListener.addElement(c);
         }
     }
 
     public String getCurrentOwner() {
-        return (Owner);
+        return Owner;
     }
 
     public String getName() {
@@ -218,17 +206,15 @@ public class CommPortIdentifier {
             throw new NoSuchPortException();
         }
     }
-    /*------------------------------------------------------------------------------
-     getPortIdentifier()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:    
-     ------------------------------------------------------------------------------*/
 
+    /**
+     * Gets communication port identifier
+     *
+     * @param p - port for which identifier object is returned
+     * @return - port identifier object
+     * @throws NoSuchPortException - in case the non existing serial port found
+     */
     static public CommPortIdentifier getPortIdentifier(CommPort p) throws NoSuchPortException {
-
         LOGGER.fine("CommPortIdentifier:getPortIdentifier(CommPort)");
 
         CommPortIdentifier c;
@@ -245,16 +231,13 @@ public class CommPortIdentifier {
         LOGGER.fine("not found!" + p.getName());
         throw new NoSuchPortException();
     }
-    /*------------------------------------------------------------------------------
-     getPortIdentifiers()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:
-     ------------------------------------------------------------------------------*/
 
-    static public Enumeration getPortIdentifiers() {
+    /**
+     * getPortIdentifiers()
+     *
+     * @return enumeration of available communication ports
+     */
+    static public Enumeration<CommPortIdentifier> getPortIdentifiers() {
 
         LOGGER.fine("static CommPortIdentifier:getPortIdentifiers()");
 
@@ -313,33 +296,27 @@ public class CommPortIdentifier {
     public synchronized boolean isCurrentlyOwned() {
         return (!Available);
     }
-    /*------------------------------------------------------------------------------
-     open()
-     accept:
-     perform:
-     return:
-     exceptions:
-     comments:
-     ------------------------------------------------------------------------------*/
 
+    /**
+     * open
+     *
+     * @param f - file descriptor
+     * @return - communication port
+     * @throws UnsupportedCommOperationException - always as is not implemented
+     * yet
+     */
     public synchronized CommPort open(FileDescriptor f) throws UnsupportedCommOperationException {
-
         LOGGER.fine("CommPortIdentifier:open(FileDescriptor)");
-
         throw new UnsupportedCommOperationException();
     }
 
     private native String native_psmisc_report_owner(String PortName);
 
-    /*------------------------------------------------------------------------------
-     open()
-     accept:      application making the call and milliseconds to block
-     during open.
-     perform:     open the port if possible
-     return:      CommPort if successful
-     exceptions:  PortInUseException if in use.
-     comments:
-     ------------------------------------------------------------------------------*/
+    /**
+     * open() accept: application making the call and milliseconds to block
+     * during open. perform: open the port if possible return: CommPort if
+     * successful exceptions: PortInUseException if in use. comments:
+     */
     private boolean HideOwnerEvents;
 
     public CommPort open(String TheOwner, int i)
@@ -410,9 +387,9 @@ public class CommPortIdentifier {
     }
 
     /**
-     * removePortOwnership()
+     * removes PortOwnership listener
      *
-     * @param c
+     * @param c - listener to remove
      */
     public void removePortOwnershipListener(CommPortOwnershipListener c) {
         LOGGER.fine("CommPortIdentifier:removePortOwnershipListener()");

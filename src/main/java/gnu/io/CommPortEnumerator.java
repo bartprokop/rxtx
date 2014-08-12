@@ -67,33 +67,26 @@ import java.util.Enumeration;
 class CommPortEnumerator implements Enumeration<CommPortIdentifier> {
 
     private CommPortIdentifier index;
-    private final static boolean debug = false;
 
     @Override
     public CommPortIdentifier nextElement() {
-        if (debug) {
-            System.out.println("CommPortEnumerator:nextElement()");
-        }
         synchronized (CommPortIdentifier.Sync) {
             if (index != null) {
                 index = index.next;
             } else {
                 index = CommPortIdentifier.CommPortIndex;
             }
-            return (index);
+            return index;
         }
     }
 
     @Override
     public boolean hasMoreElements() {
-        if (debug) {
-            System.out.println("CommPortEnumerator:hasMoreElements() " + CommPortIdentifier.CommPortIndex == null ? false : true);
-        }
         synchronized (CommPortIdentifier.Sync) {
             if (index != null) {
-                return index.next == null ? false : true;
+                return index.next != null;
             } else {
-                return CommPortIdentifier.CommPortIndex == null ? false : true;
+                return CommPortIdentifier.CommPortIndex != null;
             }
         }
     }

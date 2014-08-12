@@ -39,11 +39,10 @@
     </properties>
 
     <distributionManagement>
-        <repository>
-            <id>bintray</id>
-            <name>bartprokop-maven-commons</name>
-            <url>https://api.bintray.com/maven/bartprokop/maven/rxtx</url>
-        </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>        
         <site>
             <id>bart.prokop.name</id>
             <url>ftp://ftp.internetdsl.pl/m2-sites/${project.artifactId}-${project.version}</url>
