@@ -91,7 +91,7 @@ final public class RXTXPort extends SerialPort {
      * Open the named port
      *
      * @param name the name of the device to open
-     * @throws PortInUseException
+     * @throws PortInUseException on error
      * @see gnu.io.SerialPort
      */
     public RXTXPort(String name) throws PortInUseException {
@@ -2074,7 +2074,7 @@ final public class RXTXPort extends SerialPort {
     /**
      * Extension to CommAPI returns boolean true on success
      *
-     * @param NoHup
+     * @param NoHup flag
      * @return if hangup
      * @throws UnsupportedCommOperationException on error
      */
@@ -2087,8 +2087,8 @@ final public class RXTXPort extends SerialPort {
     /**
      * Extension to CommAPI returns boolean true on success
      *
-     * @return
-     * @throws UnsupportedCommOperationException
+     * @return hangup status
+     * @throws UnsupportedCommOperationException on error
      */
     @Override
     public boolean getCallOutHangup() throws UnsupportedCommOperationException {
@@ -2099,8 +2099,8 @@ final public class RXTXPort extends SerialPort {
     /**
      * Extension to CommAPI returns boolean true on success
      *
-     * @return
-     * @throws UnsupportedCommOperationException
+     * @return status
+     * @throws UnsupportedCommOperationException on error
      */
     public boolean clearCommInput() throws UnsupportedCommOperationException {
         logger.fine("RXTXPort:clearCommInput()");
