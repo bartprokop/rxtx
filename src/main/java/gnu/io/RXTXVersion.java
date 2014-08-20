@@ -69,20 +69,20 @@ import java.util.logging.Logger;
  * A class to keep the current version in
  */
 public class RXTXVersion {
-
+    
     private static final Logger LOGGER = Logger.getLogger(RXTXVersion.class.getName());
     private static final String EXPECTED_NATIVE_VERSION = "RXTX-2.2-20081207 Cloudhopper Build rxtx.cloudhopper.net";
     private static final String BASE_NAME = "rxtxSerial";
     private static final String OSNAME = System.getProperty("os.name");
     private static final String OSARCH = System.getProperty("os.arch");
     private static final String SHARED_LIBRARY;
-
+    
     static {
         SHARED_LIBRARY = resourceName();
         provideNativeLibraries();
         displayWelcome();
     }
-
+    
     private static String resourceName() {
         if (SHARED_LIBRARY != null) {
             throw new IllegalStateException();
@@ -106,13 +106,11 @@ public class RXTXVersion {
     public static String getExpectedNativeVersion() {
         return EXPECTED_NATIVE_VERSION;
     }
-
+    
     public static native String nativeGetVersion();
-
+    
     private static void provideNativeLibraries() {
         try {
-            System.out.println("We will use: " + SHARED_LIBRARY);
-            System.out.println(OSNAME);
             File outFile = new File(System.getProperty("java.io.tmpdir"));
             outFile = new File(outFile, SHARED_LIBRARY);
             try (InputStream is = RXTXVersion.class.getResourceAsStream(SHARED_LIBRARY);
@@ -125,7 +123,7 @@ public class RXTXVersion {
             ioe.printStackTrace(System.err);
         }
     }
-
+    
     private static long copy(InputStream input, OutputStream output) throws IOException {
         final byte[] buffer = new byte[1024];
         long count = 0;
@@ -153,24 +151,24 @@ public class RXTXVersion {
         LOGGER.info("=========================================");
         LOGGER.log(Level.INFO, "Native lib Version = {0}", LibVersion);
         LOGGER.log(Level.INFO, "Java lib Version   = {0}", JarVersion);
-
+        
         if (!JarVersion.equals(LibVersion)) {
             LOGGER.warning("RXTX Version mismatch");
         }
     }
-
+    
     static void ensureNativeCodeLoaded() {
         if (!getExpectedNativeVersion().equals(nativeGetVersion())) {
-            System.out.print("");
+            LOGGER.warning("Native libraries mismatch");
         }
     }
-
+    
     public static String getOsName() {
         return OSNAME;
     }
-
+    
     public static String getOsArch() {
         return OSARCH;
     }
-
+    
 }
