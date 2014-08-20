@@ -74,10 +74,28 @@ public class RXTXVersion {
     private static final String EXPECTED_NATIVE_VERSION = "RXTX-2.2-20081207 Cloudhopper Build rxtx.cloudhopper.net";
     private static final String BASE_NAME = "rxtxSerial";
     private static final String OSNAME = System.getProperty("os.name");
+    private static final String OSARCH = System.getProperty("os.arch");
+    private static final String SHARED_LIBRARY;
 
     static {
+        SHARED_LIBRARY = resourceName();
         provideNativeLibraries();
         displayWelcome();
+    }
+
+    private static String resourceName() {
+        if (SHARED_LIBRARY != null) {
+            throw new IllegalStateException();
+        }
+        String retVal = BASE_NAME;
+        retVal += "-";
+        retVal += OSARCH;
+        if (OSNAME.toLowerCase().indexOf("windows") != -1) {
+            retVal += ".dll";
+        } else {
+            retVal += ".so";
+        }
+        return retVal;
     }
 
     /**
@@ -91,17 +109,13 @@ public class RXTXVersion {
 
     public static native String nativeGetVersion();
 
-    private static String resourceName() {
-        return BASE_NAME + System.getProperty("sun.arch.data.model", "") + ".dll";
-    }
-
     private static void provideNativeLibraries() {
         try {
-            System.out.println("We will use: " + resourceName());
+            System.out.println("We will use: " + SHARED_LIBRARY);
             System.out.println(OSNAME);
             File outFile = new File(System.getProperty("java.io.tmpdir"));
-            outFile = new File(outFile, resourceName());
-            try (InputStream is = RXTXVersion.class.getResourceAsStream(resourceName());
+            outFile = new File(outFile, SHARED_LIBRARY);
+            try (InputStream is = RXTXVersion.class.getResourceAsStream(SHARED_LIBRARY);
                     FileOutputStream fos = new FileOutputStream(outFile)) {
                 copy(is, fos);
             }
@@ -153,6 +167,10 @@ public class RXTXVersion {
 
     public static String getOsName() {
         return OSNAME;
+    }
+
+    public static String getOsArch() {
+        return OSARCH;
     }
 
 }
