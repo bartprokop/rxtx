@@ -3,7 +3,6 @@ package name.prokop.bart.rxtx;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
-import gnu.io.ParallelPort;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import java.io.IOException;
@@ -143,8 +142,8 @@ public class Demo1 {
      *
      * @return Zwraca port szeregowy o zadanej nazwie
      * @param portName Nazwa portu
-     * @throws IOException W przypadku, gdy nie uda�o
-     * si� otworzy� portu szeregowego, wraz z opisem.
+     * @throws IOException W przypadku, gdy nie uda�o si� otworzy� portu
+     * szeregowego, wraz z opisem.
      */
     public static SerialPort getSerialPort(String portName) throws IOException {
         try {
@@ -164,20 +163,4 @@ public class Demo1 {
         throw new IOException("To nie jest port szeregowy");
     }
 
-    public static ParallelPort getParallelPort(String portName) throws IOException {
-        try {
-            CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(portName);
-            if (portId.getPortType() == CommPortIdentifier.PORT_PARALLEL) {
-                if (portId.getName().equals(portName)) {
-                    return (ParallelPort) portId.open("Bart Prokop Comm Helper", 3000);
-                }
-            }
-        } catch (NoSuchPortException e) {
-            throw new IOException("NoSuchPortException @ " + portName + " : " + e.getMessage());
-        } catch (PortInUseException e) {
-            throw new IOException("PortInUseException @ " + portName + " : " + e.getMessage());
-        }
-
-        throw new IOException("To nie jest port rwnoleg�y");
-    }
 }

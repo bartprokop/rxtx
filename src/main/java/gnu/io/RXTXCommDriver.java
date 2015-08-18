@@ -766,8 +766,8 @@ public class RXTXCommDriver implements CommDriver {
                     } else {
                         return new RXTXPort(deviceDirectory + PortName);
                     }
-                case CommPortIdentifier.PORT_PARALLEL:
-                    return new LPRPort(PortName);
+//                case CommPortIdentifier.PORT_PARALLEL:
+//                    return new LPRPort(PortName);
                 default:
                     logger.fine("unknown PortType  " + PortType + " passed to RXTXCommDriver.getCommPort()");
 
