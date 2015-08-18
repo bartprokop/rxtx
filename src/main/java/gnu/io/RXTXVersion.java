@@ -57,45 +57,39 @@
  --------------------------------------------------------------------------*/
 package gnu.io;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * A class to keep the current version in
  */
 public class RXTXVersion {
-    
+
     private static final Logger LOGGER = Logger.getLogger(RXTXVersion.class.getName());
+    private static final String RXTX_VERSION = "2.2.2";
     private static final String EXPECTED_NATIVE_VERSION = "RXTX-2.2-20081207 Cloudhopper Build rxtx.cloudhopper.net";
-    private static final String BASE_NAME = "rxtxSerial";
-    private static final String OSNAME = System.getProperty("os.name");
-    private static final String OSARCH = System.getProperty("os.arch");
-    private static final String SHARED_LIBRARY;
-    
-    static {
-        SHARED_LIBRARY = resourceName();
-        provideNativeLibraries();
-        displayWelcome();
+
+    static void ensureNativeCodeLoaded() {
+        try {
+            Class.forName("gnu.io.RXTXInitializer");
+        } catch (ClassNotFoundException cnfe) {
+            throw new IllegalStateException("RXTX not initialized", cnfe);
+        }
+        if (!getExpectedNativeVersion().equals(nativeGetVersion())) {
+            LOGGER.warning("Native libraries mismatch");
+        }
     }
-    
-    private static String resourceName() {
-        if (SHARED_LIBRARY != null) {
-            throw new IllegalStateException();
-        }
-        String retVal = BASE_NAME;
-        retVal += "-";
-        retVal += OSARCH;
-        if (OSNAME.toLowerCase().indexOf("windows") != -1) {
-            retVal += ".dll";
-        } else {
-            retVal += ".so";
-        }
-        return retVal;
+
+    public static String getOsName() {
+        return System.getProperty("os.name");
+    }
+
+    /**
+     * static method to return the current version of RXTX unique to RXTX.
+     *
+     * @return a string representing the version "RXTX-1.4-9"
+     */
+    public static String getVersion() {
+        return RXTX_VERSION;
     }
 
     /**
@@ -106,69 +100,6 @@ public class RXTXVersion {
     public static String getExpectedNativeVersion() {
         return EXPECTED_NATIVE_VERSION;
     }
-    
-    public static native String nativeGetVersion();
-    
-    private static void provideNativeLibraries() {
-        try {
-            File outFile = new File(System.getProperty("java.io.tmpdir"));
-            outFile = new File(outFile, SHARED_LIBRARY);
-            try (InputStream is = RXTXVersion.class.getResourceAsStream(SHARED_LIBRARY);
-                    FileOutputStream fos = new FileOutputStream(outFile)) {
-                copy(is, fos);
-            }
-            System.load(outFile.getAbsolutePath());
-            outFile.deleteOnExit();
-        } catch (IOException ioe) {
-            ioe.printStackTrace(System.err);
-        }
-    }
-    
-    private static long copy(InputStream input, OutputStream output) throws IOException {
-        final byte[] buffer = new byte[1024];
-        long count = 0;
-        int n = 0;
-        while (-1 != (n = input.read(buffer))) {
-            output.write(buffer, 0, n);
-            count += n;
-        }
-        return count;
-    }
 
-    /**
-     * Perform a crude check to make sure people don't mix versions of the Jar
-     * and native lib
-     *
-     * Mixing the libs can create a nightmare.
-     *
-     * It could be possible to move this over to RXTXVersion but All we want to
-     * do is warn people when first loading the Library.
-     */
-    static void displayWelcome() {
-        final String JarVersion = RXTXVersion.getExpectedNativeVersion();
-        final String LibVersion = RXTXVersion.nativeGetVersion();
-        LOGGER.info("Stable Library");
-        LOGGER.info("=========================================");
-        LOGGER.log(Level.INFO, "Native lib Version = {0}", LibVersion);
-        LOGGER.log(Level.INFO, "Java lib Version   = {0}", JarVersion);
-        
-        if (!JarVersion.equals(LibVersion)) {
-            LOGGER.warning("RXTX Version mismatch");
-        }
-    }
-    
-    static void ensureNativeCodeLoaded() {
-        if (!getExpectedNativeVersion().equals(nativeGetVersion())) {
-            LOGGER.warning("Native libraries mismatch");
-        }
-    }
-    
-    public static String getOsName() {
-        return OSNAME;
-    }
-    
-    public static String getOsArch() {
-        return OSARCH;
-    }
-    
+    public static native String nativeGetVersion();
 }
