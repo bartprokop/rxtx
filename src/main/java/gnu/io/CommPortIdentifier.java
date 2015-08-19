@@ -64,6 +64,15 @@ import java.util.Enumeration;
 import java.util.logging.Logger;
 
 /**
+ * A
+ * <code>CommPortIdentifier</code> represents a port on the system. In contrast
+ * to
+ * <code>CommPort</code> this class represents the port as an abstract device
+ * and deals with the process of discovering, obtaining/managing ownership and
+ * open the port. When a port is opened, a port type dependent
+ * <code>CommPort</code> object is obtained and can be used to actually read and
+ * write the port.
+ *
  * @author Trent Jarvi
  * @author Bartłomiej P. Prokop
  * @version 2.3
@@ -262,7 +271,7 @@ public class CommPortIdentifier {
      * no port with the given name can be found a
      * <code>NoSuchPortException</code> is thrown.
      *
-     * @param portName the name of the port whose identifier is looked up
+     * @param s the name of the port whose identifier is looked up
      * @return the identifier of the port
      * @throws NoSuchPortException when no port with the given name was found
      */

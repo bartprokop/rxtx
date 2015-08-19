@@ -61,10 +61,11 @@ package gnu.io;
  * The port requested is currently in use
  *
  * @author Trent Jarvi
+ * @author by Alexander Graf
  * @author Bartłomiej P. Prokop
  * @version 2.3
  */
-public class PortInUseException extends Exception {
+public final class PortInUseException extends Exception {
 
     /**
      * the owner of the port requested.

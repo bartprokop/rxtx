@@ -64,7 +64,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * CommPort
+ * Represents an exclusively owned, opened port.
+ *
+ * In contrast to
+ * <code>CommPortIdentifier</code> this class represents an opened port which is
+ * owned by this application. The application can therefor access the ports
+ * properties.
+ *
+ * The
+ * <code>CommPort</code> class is the base class for all port types.
  *
  * @author Trent Jarvi
  * @author Bartłomiej P. Prokop

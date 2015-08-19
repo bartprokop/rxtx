@@ -64,7 +64,12 @@ package gnu.io;
  */
 public interface CommDriver {
 
-    public abstract CommPort getCommPort(String portName, int portType);
+    default CommPort getCommPort(String portName) {
+        return getCommPort(portName, CommPortIdentifier.PORT_SERIAL);
+    }
 
-    public abstract void initialize();
+    @Deprecated
+    CommPort getCommPort(String portName, int portType);
+
+    void initialize();
 }

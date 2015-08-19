@@ -61,10 +61,11 @@ package gnu.io;
  * The requested Port does not exist
  *
  * @author Trent Jarvi
+ * @author by Alexander Graf
  * @author Bartłomiej P. Prokop
  * @version 2.3
  */
-public class NoSuchPortException extends Exception {
+public final class NoSuchPortException extends Exception {
 
     NoSuchPortException(String str) {
         super(str);
