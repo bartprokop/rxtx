@@ -72,20 +72,55 @@ public class CommPortIdentifier {
 
     private static final Logger LOGGER = Logger.getLogger(CommPortIdentifier.class.getName());
 
+    /**
+     * The port is a RS232 serial port.
+     */
     public static final int PORT_SERIAL = 1;  // rs232 Port
     public static final int PORT_PARALLEL = 2;  // Parallel Port
     public static final int PORT_I2C = 3;  // i2c Port
     public static final int PORT_RS485 = 4;  // rs485 Port
     public static final int PORT_RAW = 5;  // Raw Port
+    /**
+     * The name of the corresponding port. On linux and probably other systems
+     * this will typically look like /dev/ttyx on Windows COMx where x is some
+     * integer.
+     */
     private final String portName;
+    /**
+     * States whether the port is available to be assigned to a new owner. When
+     * it is false, the port is currently owned.
+     */
     private boolean Available = true;
+    /**
+     * The name of the current owner (might be <code>null</code>) and
+     * <code>null</code> if the port is not currently owned.
+     */
     private String Owner;
+    /**
+     * When the port is open this will hold the port object.
+     */
     private CommPort commPort;
+    /**
+     * The driver which is used to access the associated port.
+     */
     private CommDriver RXTXDriver;
+    // TODO (by Alexander Graf) commPortIndex and next are part of reinventing
+    // the wheel by implementing a linked list
     static CommPortIdentifier CommPortIndex;
     CommPortIdentifier next;
+    /**
+     * A PORT_* constant indicating the port hardware type.
+     */
     private final int portType;
+    // TODO (by Alexander Graf) the access to this field from all corners of
+    // rxtx is really ugly and should be rewritten
     static final Object Sync = new Object();
+    /**
+     * A list of registered <code>PortOwnershipListener</code>s.
+     */
+    // TODO (by Alexander Graf) the list of listeners should have a plural name
+    // and should be private. Should use interface type here and Vector is
+    // deprecated
     Vector ownershipListener;
 
     /**
@@ -108,6 +143,17 @@ public class CommPortIdentifier {
         RXTXVersion.ensureNativeCodeLoaded();
     }
 
+    /**
+     * Creates a new port identifier. This is typically called by a drivers
+     * <code>initialize()</code> method.
+     *
+     * @param portName a name for the port which is used as a per-driver-unique
+     * identifier. Because the name might be exposed to the user it should be
+     * unique across all drivers.
+     * @param commPort (unused by rxtx; set to null)
+     * @param portType the hardware type of the port
+     * @param driver the driver which is used to access this port
+     */
     CommPortIdentifier(String portName, CommPort commPort, int portType, CommDriver driver) {
         this.portName = portName;
         this.commPort = commPort;
@@ -127,6 +173,13 @@ public class CommPortIdentifier {
      */
     public static void addPortName(String s, int type, CommDriver c) {
         LOGGER.fine("CommPortIdentifier:addPortName(" + s + ")");
+        // TODO (by Alexander Graf) the usage of the constructor with a null
+        // value for the port is a major design problem. Rxtx currently creates
+        // the port objects on a per-open basis. This clashes with the design
+        // idea of the comm API where a port object is created by the driver
+        // once and given to the CommPortIdentifier constructor.
+        // This problem is again introduced by the poor design of the comm APIs
+        // SPI.
         AddIdentifierToList(new CommPortIdentifier(s, null, type, c));
     }
 
@@ -134,6 +187,8 @@ public class CommPortIdentifier {
      * AddIdentifierToList() accept: The cpi to add to the list. perform:
      * return: exceptions: comments:
      */
+    //TODO (Alexander Graf) This method/class seems to reinvent the wheel
+    //by implementing its own linked list functionallity
     private static void AddIdentifierToList(CommPortIdentifier cpi) {
         LOGGER.fine("CommPortIdentifier:AddIdentifierToList()");
         synchronized (Sync) {
@@ -152,9 +207,13 @@ public class CommPortIdentifier {
     }
 
     /**
-     * addPortOwnershipListener()
+     * Registers an ownership listener. The listener will be informed when other
+     * applications open or close the port which is represented by this
+     * <code>CommPortIdentifier</code>. When the port is currently owned by this
+     * application the listener is informed when other applications request
+     * ownership of the port.
      *
-     * @param c - listener to add
+     * @param c the ownership listener to register
      */
     public void addPortOwnershipListener(CommPortOwnershipListener c) {
         LOGGER.fine("CommPortIdentifier:addPortOwnershipListener()");
@@ -169,14 +228,44 @@ public class CommPortIdentifier {
         }
     }
 
+    /**
+     * Returns a textual representation of the current owner of the port. An
+     * owner is an application which is currently using the port (in the sense
+     * that it opened the port and has not closed it yet).
+     *
+     * To check if a port is owned use the <code>isCurrentlyOwned</code> method.
+     * Do not rely on this method to return null. It can't be guaranteed that
+     * owned ports have a non null owner.
+     *
+     * @return the port owner or null if the port is not currently owned
+     */
     public String getCurrentOwner() {
         return Owner;
     }
 
+    /**
+     * Returns the name of the port which is represented by this
+     * <code>CommPortIdentifier</code>. Be aware of the fact that there are
+     * different conventions for port names on different operating systems (for
+     * example a port name on linux looks like '/dev/tty1', on Windows like
+     * 'COM1'). Therefor the application should not parse this string in a
+     * probably non cross platform compatible way.
+     *
+     * @return the name of the associated port
+     */
     public String getName() {
         return portName;
     }
 
+    /**
+     * Returns the associated port identifier of a port with the given name. If
+     * no port with the given name can be found a
+     * <code>NoSuchPortException</code> is thrown.
+     *
+     * @param portName the name of the port whose identifier is looked up
+     * @return the identifier of the port
+     * @throws NoSuchPortException when no port with the given name was found
+     */
     static public CommPortIdentifier getPortIdentifier(String s) throws NoSuchPortException {
         LOGGER.fine("CommPortIdentifier:getPortIdentifier(" + s + ")");
         CommPortIdentifier index;
@@ -233,7 +322,8 @@ public class CommPortIdentifier {
     }
 
     /**
-     * getPortIdentifiers()
+     * Returns an enumeration of port identifiers which represent the
+     * communication ports currently available on the system.
      *
      * @return enumeration of available communication ports
      */
@@ -289,10 +379,23 @@ public class CommPortIdentifier {
         return new CommPortEnumerator();
     }
 
+    /**
+     * Returns the port hardware type of the associated port. The port type is
+     * encoded as one of the available <code>PORT_*</code> constants.
+     *
+     * @return the port type
+     */
     public int getPortType() {
         return portType;
     }
 
+    /**
+     * Determines whether the associated port is in use by an application
+     * (including this application).
+     *
+     * @return true if an application is using the port, false if the port is
+     * not currently owned.
+     */
     public synchronized boolean isCurrentlyOwned() {
         return (!Available);
     }
@@ -305,6 +408,10 @@ public class CommPortIdentifier {
      * @throws UnsupportedCommOperationException - always as is not implemented
      * yet
      */
+    // TODO (by Alexander Graf) this method is for legacy support of the
+    //comm API and is obviosly unsupported by rxtx
+    // It should be deprecated (and possibly removed some day) when we don't
+    // care about compatibility to the comm API
     public synchronized CommPort open(FileDescriptor f) throws UnsupportedCommOperationException {
         LOGGER.fine("CommPortIdentifier:open(FileDescriptor)");
         throw new UnsupportedCommOperationException();
@@ -319,6 +426,25 @@ public class CommPortIdentifier {
      */
     private boolean HideOwnerEvents;
 
+    /**
+     * Opens the port. When the port is in use by another application an
+     * ownership request is propagated. When the current owner does not close
+     * the port within <code>timeLimit</code> milliseconds, the open operation
+     * will fail with a <code>PortInUseException</code>.
+     *
+     * The <code>owner</code> should contain the name of the application which
+     * opens the port. Later it can be read by other applications to distinguish
+     * the owner of the port.
+     *
+     * @param owner the name of the application which is opening the port
+     * @param timeLimit the time limit to obtain ownership in milliseconds
+     * @return the port object of the successfully opened port
+     * @throws gnu.io.PortInUseException when the exclusive ownership of the
+     * port could not be obtained
+     */
+    // TODO (by Alexander Graf) is there really done an ownership request that
+    // can reach applications outside of this virtual machine, probably not
+    // not written in java? I can't see where this request is done.
     public CommPort open(String TheOwner, int i)
             throws gnu.io.PortInUseException {
 
@@ -407,6 +533,10 @@ public class CommPortIdentifier {
             LOGGER.fine("CommPortIdentifier:internalClosePort()");
             Owner = null;
             Available = true;
+            // TODO (by Alexander Graf) to set the commPort to null is
+            // incompatible with the idea behind the architecture of the
+            // constructor, where commPort is assigned by the driver once
+            // in a virtual machines lifetime.
             commPort = null;
             /*  this tosses null pointer?? */
             notifyAll();
@@ -418,6 +548,7 @@ public class CommPortIdentifier {
         LOGGER.fine("CommPortIdentifier:fireOwnershipEvent( " + eventType + " )");
         if (ownershipListener != null) {
             CommPortOwnershipListener c;
+            //TODO (by Alexander Graf) for statement abuse ...
             for (Enumeration e = ownershipListener.elements();
                     e.hasMoreElements();
                     c.ownershipChange(eventType)) {

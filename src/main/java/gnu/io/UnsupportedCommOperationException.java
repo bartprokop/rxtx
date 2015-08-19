@@ -61,10 +61,11 @@ package gnu.io;
  * Exception thrown when a method does not support the requested functionality.
  *
  * @author Trent Jarvi
+ * @author by Alexander Graf
  * @author Bartłomiej P. Prokop
  * @version 2.3
  */
-public class UnsupportedCommOperationException extends Exception {
+public final class UnsupportedCommOperationException extends Exception {
 
     /**
      * create an instances with no message about why the Exception was thrown.
