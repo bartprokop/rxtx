@@ -527,6 +527,7 @@ public class RXTXCommDriver implements CommDriver {
                 if (RXTXVersion.getOsName().equals("Linux")) {
                     String[] Temp = {
                         "ttyS", // linux Serial Ports
+                        "ttyAMA", // for Raspberry Pi 2
                         "ttySA", // for the IPAQs
                         "ttyUSB", // for USB frobs
                         "rfcomm", // bluetooth serial device

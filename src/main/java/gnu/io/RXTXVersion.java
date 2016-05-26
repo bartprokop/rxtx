@@ -66,7 +66,8 @@ public class RXTXVersion {
 
     private static final Logger LOGGER = Logger.getLogger(RXTXVersion.class.getName());
     private static final String RXTX_VERSION = "2.2.2";
-    private static final String EXPECTED_NATIVE_VERSION = "RXTX-2.2-20081207 Cloudhopper Build rxtx.cloudhopper.net";
+    private static final String EXPECTED_NATIVE_VERSION_RPI = "RXTX-2.2pre2";
+    private static final String EXPECTED_NATIVE_VERSION_WIN = "RXTX-2.2-20081207 Cloudhopper Build rxtx.cloudhopper.net";
 
     static void ensureNativeCodeLoaded() {
         try {
@@ -83,6 +84,10 @@ public class RXTXVersion {
         return System.getProperty("os.name");
     }
 
+    public static String getOsArch() {
+        return System.getProperty("os.arch");
+    }
+
     /**
      * static method to return the current version of RXTX unique to RXTX.
      *
@@ -93,12 +98,15 @@ public class RXTXVersion {
     }
 
     /**
-     * static method to return the current version of RXTX unique to RXTX.
+     * static method to return the expected version of native RXTX dll/so.
      *
      * @return a string representing the version "RXTX-1.4-9"
      */
     public static String getExpectedNativeVersion() {
-        return EXPECTED_NATIVE_VERSION;
+        if ("arm".equals(getOsArch())) {
+            return EXPECTED_NATIVE_VERSION_RPI;
+        }
+        return EXPECTED_NATIVE_VERSION_WIN;
     }
 
     public static native String nativeGetVersion();
