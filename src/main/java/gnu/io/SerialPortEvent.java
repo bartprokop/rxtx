@@ -129,7 +129,7 @@ public class SerialPortEvent extends EventObject {
     /**
      * Creates a new <code>SerialPortEvent</code> of specified event type.
      *
-     * @param srcPort the port which is associated with the event
+     * @param srcport the port which is associated with the event
      * @param eventType the type of the event
      * @param oldValue the value of the signal before the event
      * @param newValue the value of the signal after the event

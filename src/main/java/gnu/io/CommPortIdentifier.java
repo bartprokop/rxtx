@@ -445,8 +445,8 @@ public class CommPortIdentifier {
      * opens the port. Later it can be read by other applications to distinguish
      * the owner of the port.
      *
-     * @param owner the name of the application which is opening the port
-     * @param timeLimit the time limit to obtain ownership in milliseconds
+     * @param TheOwner owner the name of the application which is opening the port
+     * @param i timeLimit the time limit to obtain ownership in milliseconds
      * @return the port object of the successfully opened port
      * @throws gnu.io.PortInUseException when the exclusive ownership of the
      * port could not be obtained
@@ -454,8 +454,7 @@ public class CommPortIdentifier {
     // TODO (by Alexander Graf) is there really done an ownership request that
     // can reach applications outside of this virtual machine, probably not
     // not written in java? I can't see where this request is done.
-    public CommPort open(String TheOwner, int i)
-            throws gnu.io.PortInUseException {
+    public CommPort open(String TheOwner, int i) throws gnu.io.PortInUseException {
 
         LOGGER.fine("CommPortIdentifier:open(" + TheOwner + ", " + i + ")");
 
