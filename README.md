@@ -1,6 +1,16 @@
 rxtx
 ====
 
+Maven coordinates:
+
+```
+<dependency>
+    <groupId>dev.prokop.rxtx</groupId>
+    <artifactId>rxtx</artifactId>
+    <version>2.2.2</version>
+</dependency>
+```
+
 Serial Port rxtx library
 
 Version 2.1.8 is:
